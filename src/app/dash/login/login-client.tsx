@@ -7,38 +7,7 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Login Client Component — HPanel Hostinger Style
-// Standalone auth page with floating language toggle.
-// ─────────────────────────────────────────────────────────────────────────────
-
-interface AuthStrings {
-  title: string;
-  subtitle: string;
-  googleBtn: string;
-  githubBtn: string;
-  separator: string;
-  emailPlaceholder: string;
-  passwordPlaceholder: string;
-  loginBtn: string;
-  forgotPassword: string;
-  noAccount: string;
-  signUp: string;
-  cantAccess: string;
-  termsDisclaimer: string;
-  backToHome: string;
-  registerTitle: string;
-  registerSubtitle: string;
-  registerBtn: string;
-  hasAccount: string;
-  logIn: string;
-  resetTitle: string;
-  resetSubtitle: string;
-  resetBtn: string;
-  backToLogin: string;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Floating Language Toggle (top-right corner)
+// Floating Language Toggle (top-right corner) — shared export
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function AuthLanguageToggle({ locale }: { locale: "en" | "id" }) {
@@ -53,14 +22,11 @@ export function AuthLanguageToggle({ locale }: { locale: "en" | "id" }) {
   return (
     <div className="fixed top-6 right-6 z-50">
       <div className="relative flex items-center bg-white border border-gray-200 rounded-full p-1 w-[120px] h-[40px] shadow-sm">
-        {/* Sliding pill background */}
         <div
           className={`absolute top-1 h-[32px] w-[54px] bg-[#673de6]/10 rounded-full transition-transform duration-300 ease-in-out ${
             locale === "id" ? "translate-x-0" : "translate-x-[58px]"
           }`}
         />
-
-        {/* ID Flag Button */}
         <button
           onClick={() => switchLocale("id")}
           className={`relative z-10 flex items-center justify-center w-[54px] h-[32px] rounded-full transition-opacity duration-200 cursor-pointer ${
@@ -70,8 +36,6 @@ export function AuthLanguageToggle({ locale }: { locale: "en" | "id" }) {
         >
           <Image src="/id.svg" alt="ID" width={20} height={20} className="w-5 h-5 rounded-sm" />
         </button>
-
-        {/* EN Flag Button */}
         <button
           onClick={() => switchLocale("en")}
           className={`relative z-10 flex items-center justify-center w-[54px] h-[32px] rounded-full transition-opacity duration-200 cursor-pointer ${
@@ -90,31 +54,69 @@ export function AuthLanguageToggle({ locale }: { locale: "en" | "id" }) {
 // Main Login UI
 // ─────────────────────────────────────────────────────────────────────────────
 
+interface AuthStrings {
+  title: string;
+  subtitle: string;
+  googleBtn: string;
+  githubBtn: string;
+  separator: string;
+  emailPlaceholder: string;
+  passwordPlaceholder: string;
+  loginBtn: string;
+  forgotPassword: string;
+  noAccount: string;
+  signUp: string;
+  cantAccess: string;
+  termsDisclaimer: string;
+  backToHome: string;
+  [key: string]: string;
+}
+
 export function LoginClient({ auth, locale }: { auth: AuthStrings; locale: "en" | "id" }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const newErrors: { email?: string; password?: string } = {};
+
+    if (!email.trim()) {
+      newErrors.email = locale === "id" ? "Email wajib diisi" : "Email is required";
+    }
+    if (!password.trim()) {
+      newErrors.password = locale === "id" ? "Kata sandi wajib diisi" : "Password is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    // For now, fall through to OAuth since credential auth isn't wired up
+    signIn("credentials", { email, password, callbackUrl: "/dashboard" });
+  }
 
   return (
     <>
-      {/* Floating Language Toggle */}
       <AuthLanguageToggle locale={locale} />
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#f4f5f9] px-4 py-12">
-        {/* Logo */}
         <div className="mb-8">
           <Image src="/logo.svg" alt="Kliqs.me" width={140} height={40} className="h-10 w-auto" />
         </div>
 
-        {/* Card */}
         <div className="w-full max-w-[450px] bg-white rounded-2xl shadow-xl p-8 sm:p-10">
-          {/* Title */}
           <h1 className="text-[1.75rem] font-bold text-gray-900 text-center mb-2">
             {auth.title}
           </h1>
 
-          {/* Social Login Buttons — 2-column grid */}
+          {/* OAuth Buttons — OUTSIDE the form */}
           <div className="grid grid-cols-2 gap-4 mt-6 mb-6">
-            {/* Google */}
             <button
+              type="button"
               onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
               className="flex items-center justify-center gap-3 h-14 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all cursor-pointer shadow-sm font-medium text-sm text-gray-700"
             >
@@ -126,9 +128,8 @@ export function LoginClient({ auth, locale }: { auth: AuthStrings; locale: "en" 
               </svg>
               Google
             </button>
-
-            {/* GitHub */}
             <button
+              type="button"
               onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
               className="flex items-center justify-center gap-3 h-14 bg-[#24292f] border border-[#24292f] rounded-xl hover:bg-[#32383f] transition-all cursor-pointer shadow-sm font-medium text-sm text-white"
             >
@@ -147,69 +148,51 @@ export function LoginClient({ auth, locale }: { auth: AuthStrings; locale: "en" 
           </div>
 
           {/* Form */}
-          <form onSubmit={(e) => { e.preventDefault(); signIn("google", { callbackUrl: "/dashboard" }); }} className="space-y-4">
-            {/* Email */}
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                {auth.emailPlaceholder}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{auth.emailPlaceholder}</label>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((p) => ({ ...p, email: undefined })); }}
                 placeholder={auth.emailPlaceholder}
-                className="w-full px-4 py-3.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all"
+                className={`w-full px-4 py-3.5 border rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all ${errors.email ? "border-red-400" : "border-gray-200"}`}
               />
+              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
             </div>
 
-            {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                {auth.passwordPlaceholder}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{auth.passwordPlaceholder}</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors((p) => ({ ...p, password: undefined })); }}
                   placeholder={auth.passwordPlaceholder}
-                  className="w-full px-4 py-3.5 pr-12 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all"
+                  className={`w-full px-4 py-3.5 pr-12 border rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all ${errors.password ? "border-red-400" : "border-gray-200"}`}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
             </div>
 
-            {/* Forgot Password */}
             <div className="text-right">
-              <a href="/reset-password" className="text-sm font-medium text-[#673de6] hover:text-[#522eb1] transition-colors">
-                {auth.forgotPassword}
-              </a>
+              <a href="/reset-password" className="text-sm font-medium text-[#673de6] hover:text-[#522eb1] transition-colors">{auth.forgotPassword}</a>
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-[#673de6] text-white text-base font-semibold rounded-lg hover:bg-[#522eb1] active:bg-[#4527a0] transition-colors cursor-pointer shadow-[0_2px_8px_rgba(103,61,230,0.25)]"
-            >
+            <button type="submit" className="w-full py-3.5 bg-[#673de6] text-white text-base font-semibold rounded-lg hover:bg-[#522eb1] active:bg-[#4527a0] transition-colors cursor-pointer shadow-[0_2px_8px_rgba(103,61,230,0.25)]">
               {auth.loginBtn}
             </button>
           </form>
 
-          {/* Can't Access */}
           <p className="mt-5 text-sm text-center text-[#673de6] font-medium">
-            <a href="/reset-password" className="hover:text-[#522eb1] transition-colors">
-              {auth.cantAccess}
-            </a>
+            <a href="/reset-password" className="hover:text-[#522eb1] transition-colors">{auth.cantAccess}</a>
           </p>
-
-          {/* Register Link */}
           <p className="mt-4 text-sm text-center text-gray-500">
             {auth.noAccount}{" "}
-            <a href="/register" className="font-semibold text-[#673de6] hover:text-[#522eb1] transition-colors">
-              {auth.signUp}
-            </a>
+            <a href="/register" className="font-semibold text-[#673de6] hover:text-[#522eb1] transition-colors">{auth.signUp}</a>
           </p>
         </div>
       </div>
