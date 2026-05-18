@@ -12,7 +12,7 @@ export const id: Translations = {
     dashboard: "Dashboard",
   },
   hero: {
-    headline: "Link Pendek, Dampak Besar.",
+    headline: "Satu Link Singkat, Engagement Auto Meningkat!",
     subtitle: "Pendekkan, bagikan, dan lacak tautan kamu dengan pemendek URL paling simpel di internet.",
     trust: "Dipercaya oleh 10.000+ kreator & developer di seluruh dunia",
   },
