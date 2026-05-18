@@ -86,16 +86,17 @@ export function middleware(request: NextRequest) {
 
       const detectedLocale = country.toUpperCase() === "ID" ? "id" : "en";
 
-      // Redirect root to locale-prefixed path
+      // Redirect root and non-locale paths to locale-prefixed equivalents
       if (pathname === "/") {
         return NextResponse.redirect(
           new URL(`https://${HOME_DOMAIN}/${detectedLocale}`, request.url)
         );
       }
 
-      // Non-locale paths like /terms, /privacy — rewrite to /home/*
-      const url = new URL(`/home${pathname}`, request.url);
-      return NextResponse.rewrite(url);
+      // Redirect legal/non-locale paths (e.g., /terms, /privacy) to locale-prefixed path
+      return NextResponse.redirect(
+        new URL(`https://${HOME_DOMAIN}/${detectedLocale}${pathname}`, request.url)
+      );
     }
   }
 
