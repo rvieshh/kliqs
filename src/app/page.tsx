@@ -7,9 +7,7 @@ import {
   Check,
   Loader2,
   ExternalLink,
-  BarChart3,
-  Zap,
-  Shield,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -17,7 +15,8 @@ import { Footer } from "@/components/footer";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Landing Page — Kliqs.me
-// Modern SaaS with floating pill header and squircle corners.
+// s.id-inspired: warm off-white bg, clean full-width header, pill input
+// with integrated CTA button, expansive single-column hero layout.
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface ShortenedLink {
@@ -94,31 +93,47 @@ export default function HomePage() {
   }
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-[#faf8f5]">
       {/* ═══════════════════════════════════════════════════════════════════════
-          FLOATING PILL NAVBAR
+          HEADER — Full-width, clean bar with logo + nav + CTA
       ═══════════════════════════════════════════════════════════════════════ */}
-      <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
-        <nav className="bg-white/70 backdrop-blur-md border border-gray-200/50 rounded-2xl px-5 py-3 shadow-sm flex items-center gap-6">
+      <header className="w-full border-b border-gray-200/60 bg-[#faf8f5]">
+        <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center">
-              <Link2 className="w-4 h-4 text-white" />
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg bg-[#635bff] flex items-center justify-center">
+              <Link2 className="w-[18px] h-[18px] text-white" />
             </div>
-            <span className="text-lg font-extrabold text-gray-900 tracking-tight">
-              Kliqs
+            <span className="text-xl font-extrabold text-gray-900 tracking-tight">
+              Kliqs.me
             </span>
           </Link>
 
-          {/* Separator */}
-          <div className="h-5 w-px bg-gray-200" />
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              Shortener
+            </a>
+            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              Analytics
+            </a>
+            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              QR Codes
+            </a>
+            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              Microsite
+            </a>
+            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              Pricing
+            </a>
+          </nav>
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-2">
+          {/* Auth CTA */}
+          <div className="flex items-center gap-3">
             {session?.user ? (
               <Link
                 href="/dashboard"
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-colors"
+                className="px-5 py-2.5 bg-[#635bff] text-white text-sm font-semibold rounded-full hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
               >
                 Dashboard
               </Link>
@@ -126,201 +141,146 @@ export default function HomePage() {
               <>
                 <Link
                   href="/login"
-                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                  className="hidden sm:inline-block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/login"
-                  className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-colors"
+                  className="px-5 py-2.5 bg-[#635bff] text-white text-sm font-semibold rounded-full hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
                 >
                   Sign Up Free
                 </Link>
               </>
             )}
           </div>
-        </nav>
-      </div>
+        </div>
+      </header>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          HERO SECTION
+          HERO SECTION — Expansive, single-column focused
       ═══════════════════════════════════════════════════════════════════════ */}
-      <main className="flex-1 flex flex-col bg-white">
-        <section className="w-full max-w-4xl mx-auto px-6 pt-44 pb-20 text-center">
-          {/* Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight mb-6">
-            Shorten your links,
-            <br />
-            <span className="text-blue-600">amplify your reach.</span>
-          </h1>
+      <main className="flex-1 flex flex-col">
+        <section className="flex-1 flex flex-col items-center justify-center px-6 py-20 sm:py-28">
+          <div className="w-full max-w-3xl mx-auto text-center">
+            {/* Headline */}
+            <h1 className="text-[2.75rem] sm:text-6xl lg:text-[4.25rem] font-black text-gray-900 leading-[1.08] tracking-tight mb-5">
+              Short Links, Big Impact.
+            </h1>
 
-          {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-gray-500 max-w-xl mx-auto mb-12 leading-relaxed font-medium">
-            Create short, memorable links in seconds. Track clicks and share
-            everywhere. Free, fast, and simple.
-          </p>
+            {/* Subtitle */}
+            <p className="text-lg sm:text-xl text-gray-500 max-w-lg mx-auto mb-14 leading-relaxed">
+              Shorten, share, and track your links with the simplest URL
+              shortener on the web.
+            </p>
 
-          {/* ─────────────────────────────────────────────────────────────────
-              URL Input (Squircle style — rounded-2xl)
-          ───────────────────────────────────────────────────────────────── */}
-          <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-            <div className="flex items-center w-full bg-gray-50 rounded-2xl p-1.5 border-2 border-gray-200 focus-within:border-blue-500 transition-colors shadow-sm">
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => {
-                  setUrl(e.target.value);
-                  if (error) setError(null);
-                }}
-                placeholder="Paste your long URL here..."
-                className="flex-1 px-5 py-4 text-base text-gray-900 bg-transparent rounded-xl placeholder:text-gray-400 focus:outline-none"
-                disabled={isLoading}
-                autoFocus
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex-shrink-0 px-7 py-4 bg-blue-600 text-white font-bold text-base rounded-xl hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Wait...
-                  </span>
-                ) : (
-                  "Shorten"
-                )}
-              </button>
-            </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="mt-4 text-sm text-red-500 font-medium animate-fade-in-up">
-                {error}
-              </div>
-            )}
-          </form>
-
-          {/* ─────────────────────────────────────────────────────────────────
-              Result Card
-          ───────────────────────────────────────────────────────────────── */}
-          {result && (
-            <div className="mt-8 w-full max-w-2xl mx-auto bg-white rounded-2xl p-6 shadow-lg border border-gray-100 animate-fade-in-up">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 min-w-0 text-left">
-                  <p className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">
-                    Your short link
-                  </p>
-                  <a
-                    href={result.shortUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xl font-bold text-blue-600 hover:underline underline-offset-4 truncate block"
-                  >
-                    {result.shortUrl.replace("https://", "")}
-                  </a>
-                </div>
-
+            {/* ─────────────────────────────────────────────────────────────────
+                URL INPUT — Pill-shaped container with integrated button
+            ───────────────────────────────────────────────────────────────── */}
+            <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+              <div className="flex items-center w-full bg-white rounded-full pl-6 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/50 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
+                <input
+                  type="text"
+                  value={url}
+                  onChange={(e) => {
+                    setUrl(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  placeholder="Paste your long URL here..."
+                  className="flex-1 py-3 text-base text-gray-900 bg-transparent placeholder:text-gray-400 focus:outline-none min-w-0"
+                  disabled={isLoading}
+                  autoFocus
+                />
                 <button
-                  onClick={handleCopy}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer ${
-                    isCopied
-                      ? "bg-green-50 text-green-600 border border-green-200"
-                      : "bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100"
-                  }`}
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-shrink-0 flex items-center gap-2 px-6 py-3.5 bg-[#635bff] text-white font-semibold text-sm rounded-full hover:bg-[#5145e5] active:bg-[#4538d4] disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer ml-3"
                 >
-                  {isCopied ? (
+                  {isLoading ? (
                     <>
-                      <Check className="w-4 h-4" />
-                      Copied!
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Shortening...
                     </>
                   ) : (
                     <>
-                      <Clipboard className="w-4 h-4" />
-                      Copy
+                      Shorten URL
+                      <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span className="truncate">{result.originalUrl}</span>
+              {/* Error Message */}
+              {error && (
+                <div className="mt-4 text-sm text-red-500 font-medium animate-fade-in-up">
+                  {error}
+                </div>
+              )}
+            </form>
+
+            {/* ─────────────────────────────────────────────────────────────────
+                Result Card
+            ───────────────────────────────────────────────────────────────── */}
+            {result && (
+              <div className="mt-8 w-full max-w-2xl mx-auto bg-white rounded-2xl p-6 shadow-md border border-gray-100 animate-fade-in-up">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1.5">
+                      Your short link
+                    </p>
+                    <a
+                      href={result.shortUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xl font-bold text-[#635bff] hover:underline underline-offset-4 truncate block"
+                    >
+                      {result.shortUrl.replace("https://", "")}
+                    </a>
+                  </div>
+
+                  <button
+                    onClick={handleCopy}
+                    className={`flex items-center gap-2 px-5 py-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer ${
+                      isCopied
+                        ? "bg-green-50 text-green-600 border border-green-200"
+                        : "bg-[#635bff]/5 text-[#635bff] hover:bg-[#635bff]/10 border border-[#635bff]/10"
+                    }`}
+                  >
+                    {isCopied ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Clipboard className="w-4 h-4" />
+                        Copy
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="truncate">{result.originalUrl}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* ─────────────────────────────────────────────────────────────────
-              Trust line
-          ───────────────────────────────────────────────────────────────── */}
-          <p className="mt-10 text-sm text-gray-400 font-medium">
-            Free forever &middot; No signup required &middot; Instant redirects
-          </p>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════════════
-            FEATURES (Simple, 3-column)
-        ═══════════════════════════════════════════════════════════════════════ */}
-        <section className="w-full bg-gray-50/70 border-t border-gray-100">
-          <div className="max-w-5xl mx-auto px-6 py-20">
-            <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-4">
-              Why Kliqs?
-            </h2>
-            <p className="text-base text-gray-500 text-center mb-14 max-w-lg mx-auto">
-              Simple tools that help you share smarter.
+            {/* ─────────────────────────────────────────────────────────────────
+                Subtle trust tagline
+            ───────────────────────────────────────────────────────────────── */}
+            <p className="mt-12 text-sm text-gray-400 font-medium">
+              Trusted by 10,000+ creators &amp; developers worldwide
             </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              {/* Feature 1 */}
-              <div className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-4">
-                  <Zap className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Lightning Fast
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Sub-50ms redirects powered by edge infrastructure. Your links
-                  are always instant.
-                </p>
-              </div>
-
-              {/* Feature 2 */}
-              <div className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-4">
-                  <BarChart3 className="w-6 h-6 text-purple-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Click Analytics
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  See how your links perform with real-time click tracking and
-                  simple stats.
-                </p>
-              </div>
-
-              {/* Feature 3 */}
-              <div className="bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Secure & Reliable
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  Every link is safe and always available. Built with privacy and
-                  trust in mind.
-                </p>
-              </div>
-            </div>
           </div>
         </section>
 
         {/* Footer */}
         <Footer />
       </main>
-    </>
+    </div>
   );
 }
