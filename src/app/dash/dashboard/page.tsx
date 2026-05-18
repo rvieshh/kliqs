@@ -179,7 +179,7 @@ export default function DashboardPage() {
               Shorten your first URL from the homepage and it will appear here.
             </p>
             <a
-              href="/"
+              href="https://home.kliqs.me"
               className="inline-flex items-center gap-2 px-5 py-3 bg-accent text-white font-medium text-sm rounded-xl btn-lift"
             >
               <Link2 className="w-4 h-4" />
