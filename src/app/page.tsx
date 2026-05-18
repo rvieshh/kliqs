@@ -8,16 +8,21 @@ import {
   Loader2,
   ExternalLink,
   ArrowRight,
+  QrCode,
+  User,
+  X,
 } from "lucide-react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { Footer } from "@/components/footer";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Landing Page — Kliqs.me
-// Professional SaaS: floating pill header (rounded-xl), warm off-white bg,
-// refined soft-square corners (rounded-xl containers, rounded-lg buttons).
+// Professional SaaS with feature tabs (Shortener, QR, Bio Page),
+// auth interceptor modal, floating pill header, rounded-xl corners.
 // ─────────────────────────────────────────────────────────────────────────────
+
+type FeatureTab = "shortener" | "qr" | "bio";
 
 interface ShortenedLink {
   id: string;
@@ -30,13 +35,17 @@ interface ShortenedLink {
 
 export default function HomePage() {
   const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState<FeatureTab>("shortener");
   const [url, setUrl] = useState("");
+  const [qrText, setQrText] = useState("");
+  const [bioUsername, setBioUsername] = useState("");
   const [result, setResult] = useState<ShortenedLink | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleShortenSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setResult(null);
@@ -73,6 +82,27 @@ export default function HomePage() {
     }
   }
 
+  function handleBioSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!bioUsername.trim()) {
+      setError("Please enter a username.");
+      return;
+    }
+    // Open auth modal instead of API call
+    setShowAuthModal(true);
+  }
+
+  function handleQrSubmit(e: FormEvent) {
+    e.preventDefault();
+    // Placeholder — QR generation coming soon
+    if (!qrText.trim()) {
+      setError("Please enter a URL or text.");
+      return;
+    }
+    setError(null);
+    // TODO: QR generation logic
+  }
+
   async function handleCopy() {
     if (!result) return;
 
@@ -92,14 +122,19 @@ export default function HomePage() {
     }
   }
 
+  function handleTabChange(tab: FeatureTab) {
+    setActiveTab(tab);
+    setError(null);
+    setResult(null);
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f9fc]">
       {/* ═══════════════════════════════════════════════════════════════════════
-          FLOATING PILL HEADER — Fixed, centered, contained width, rounded-xl
+          FLOATING PILL HEADER
       ═══════════════════════════════════════════════════════════════════════ */}
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
         <nav className="bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-xl px-6 py-3.5 shadow-[0_2px_16px_rgba(0,0,0,0.04)] flex items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#635bff] flex items-center justify-center">
               <Link2 className="w-4 h-4 text-white" />
@@ -109,7 +144,6 @@ export default function HomePage() {
             </span>
           </Link>
 
-          {/* Navigation */}
           <div className="hidden md:flex items-center gap-7">
             <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
               Shortener
@@ -128,7 +162,6 @@ export default function HomePage() {
             </a>
           </div>
 
-          {/* Auth CTA */}
           <div className="flex items-center gap-3">
             {session?.user ? (
               <Link
@@ -158,7 +191,7 @@ export default function HomePage() {
       </header>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          HERO SECTION — Expansive, single-column focused
+          HERO SECTION
       ═══════════════════════════════════════════════════════════════════════ */}
       <main className="flex-1 flex flex-col">
         <section className="flex-1 flex flex-col items-center justify-center px-6 pt-40 pb-20 sm:pt-48 sm:pb-28">
@@ -169,59 +202,161 @@ export default function HomePage() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-gray-500 max-w-lg mx-auto mb-14 leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-500 max-w-lg mx-auto mb-10 leading-relaxed">
               Shorten, share, and track your links with the simplest URL
               shortener on the web.
             </p>
 
             {/* ─────────────────────────────────────────────────────────────────
-                URL INPUT — rounded-xl container with integrated button (rounded-lg)
+                FEATURE TABS
             ───────────────────────────────────────────────────────────────── */}
-            <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-              <div className="flex items-center w-full bg-white rounded-xl pl-5 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/40 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
-                <input
-                  type="text"
-                  value={url}
-                  onChange={(e) => {
-                    setUrl(e.target.value);
-                    if (error) setError(null);
-                  }}
-                  placeholder="Paste your long URL here..."
-                  className="flex-1 py-3 text-base text-gray-900 bg-transparent placeholder:text-gray-400 focus:outline-none min-w-0"
-                  disabled={isLoading}
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer ml-3"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Shortening...
-                    </>
-                  ) : (
-                    <>
-                      Shorten URL
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="mt-4 text-sm text-red-500 font-medium animate-fade-in-up">
-                  {error}
-                </div>
-              )}
-            </form>
+            <div className="flex items-center justify-center gap-1 bg-gray-100 rounded-xl p-1 mb-8 w-fit mx-auto">
+              <button
+                onClick={() => handleTabChange("shortener")}
+                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                  activeTab === "shortener"
+                    ? "bg-white text-[#635bff] shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                <Link2 className="w-4 h-4" />
+                Shortener
+              </button>
+              <button
+                onClick={() => handleTabChange("qr")}
+                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                  activeTab === "qr"
+                    ? "bg-white text-[#635bff] shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                <QrCode className="w-4 h-4" />
+                Kode QR
+              </button>
+              <button
+                onClick={() => handleTabChange("bio")}
+                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                  activeTab === "bio"
+                    ? "bg-white text-[#635bff] shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                <User className="w-4 h-4" />
+                Bio Page
+              </button>
+            </div>
 
             {/* ─────────────────────────────────────────────────────────────────
-                Result Card — rounded-xl
+                DYNAMIC INPUT FORMS
             ───────────────────────────────────────────────────────────────── */}
-            {result && (
+
+            {/* === SHORTENER TAB === */}
+            {activeTab === "shortener" && (
+              <div className="animate-fade-in-up">
+                <form onSubmit={handleShortenSubmit} className="w-full max-w-2xl mx-auto">
+                  <div className="flex items-center w-full bg-white rounded-xl pl-5 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/40 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
+                    <input
+                      type="text"
+                      value={url}
+                      onChange={(e) => {
+                        setUrl(e.target.value);
+                        if (error) setError(null);
+                      }}
+                      placeholder="Paste your long URL here..."
+                      className="flex-1 py-3 text-base text-gray-900 bg-transparent placeholder:text-gray-400 focus:outline-none min-w-0"
+                      disabled={isLoading}
+                      autoFocus
+                    />
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer ml-3"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Shortening...
+                        </>
+                      ) : (
+                        <>
+                          Shorten URL
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* === KODE QR TAB === */}
+            {activeTab === "qr" && (
+              <div className="animate-fade-in-up">
+                <form onSubmit={handleQrSubmit} className="w-full max-w-2xl mx-auto">
+                  <div className="flex items-center w-full bg-white rounded-xl pl-5 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/40 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
+                    <input
+                      type="text"
+                      value={qrText}
+                      onChange={(e) => {
+                        setQrText(e.target.value);
+                        if (error) setError(null);
+                      }}
+                      placeholder="Enter URL or text to generate QR Code..."
+                      className="flex-1 py-3 text-base text-gray-900 bg-transparent placeholder:text-gray-400 focus:outline-none min-w-0"
+                    />
+                    <button
+                      type="submit"
+                      className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors cursor-pointer ml-3"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      Generate QR
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* === BIO PAGE TAB === */}
+            {activeTab === "bio" && (
+              <div className="animate-fade-in-up">
+                <form onSubmit={handleBioSubmit} className="w-full max-w-2xl mx-auto">
+                  <div className="flex items-center w-full bg-white rounded-xl pl-5 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/40 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
+                    <input
+                      type="text"
+                      value={bioUsername}
+                      onChange={(e) => {
+                        setBioUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
+                        if (error) setError(null);
+                      }}
+                      placeholder="yourname"
+                      className="flex-1 py-3 text-base text-gray-900 bg-transparent placeholder:text-gray-400 focus:outline-none min-w-0"
+                    />
+                    <span className="text-sm font-medium text-gray-400 mr-3 select-none">
+                      .kliqs.me
+                    </span>
+                    <button
+                      type="submit"
+                      className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors cursor-pointer"
+                    >
+                      <User className="w-4 h-4" />
+                      Buat Bio Page
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="mt-4 text-sm text-red-500 font-medium animate-fade-in-up">
+                {error}
+              </div>
+            )}
+
+            {/* ─────────────────────────────────────────────────────────────────
+                Result Card (Shortener only)
+            ───────────────────────────────────────────────────────────────── */}
+            {result && activeTab === "shortener" && (
               <div className="mt-8 w-full max-w-2xl mx-auto bg-white rounded-xl p-6 shadow-md border border-gray-100 animate-fade-in-up">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0 text-left">
@@ -269,9 +404,7 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* ─────────────────────────────────────────────────────────────────
-                Subtle trust tagline
-            ───────────────────────────────────────────────────────────────── */}
+            {/* Trust tagline */}
             <p className="mt-12 text-sm text-gray-400 font-medium">
               Trusted by 10,000+ creators &amp; developers worldwide
             </p>
@@ -281,6 +414,82 @@ export default function HomePage() {
         {/* Footer */}
         <Footer />
       </main>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          AUTH INTERCEPTOR MODAL (Bio Page)
+      ═══════════════════════════════════════════════════════════════════════ */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+            onClick={() => setShowAuthModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl p-8 sm:p-10 w-full max-w-md shadow-2xl border border-gray-100 animate-fade-in-up">
+            {/* Close button */}
+            <button
+              onClick={() => setShowAuthModal(false)}
+              className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="text-center">
+              {/* Icon */}
+              <div className="w-14 h-14 rounded-xl bg-[#635bff]/10 flex items-center justify-center mx-auto mb-5">
+                <User className="w-7 h-7 text-[#635bff]" />
+              </div>
+
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Satu langkah lagi!
+              </h2>
+              <p className="text-base text-gray-500 mb-8 leading-relaxed">
+                Login atau daftar akun Kliqs dulu yuk untuk mengklaim subdomain{" "}
+                <span className="font-semibold text-[#635bff]">
+                  {bioUsername || "yourname"}.kliqs.me
+                </span>
+              </p>
+
+              {/* OAuth Buttons */}
+              <div className="space-y-3">
+                {/* Google */}
+                <button
+                  onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                  className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-white border border-gray-200 rounded-xl font-medium text-sm text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all cursor-pointer"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                  </svg>
+                  Masuk dengan Google
+                </button>
+
+                {/* GitHub */}
+                <button
+                  onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+                  className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-[#24292f] border border-[#24292f] rounded-xl font-medium text-sm text-white hover:bg-[#32383f] transition-all cursor-pointer"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                  </svg>
+                  Masuk dengan GitHub
+                </button>
+              </div>
+
+              <p className="mt-6 text-xs text-gray-400">
+                Dengan masuk, kamu setuju dengan{" "}
+                <a href="#" className="underline hover:text-gray-600">Ketentuan Layanan</a>
+                {" "}kami.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
