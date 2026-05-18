@@ -600,29 +600,38 @@ export default function HomePage() {
                 </span>
               </a>
 
-              {/* Sponsor 2: Placeholder */}
-              <a
-                href="#"
-                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
+              {/* Sponsor 2: Mebalih (no link) */}
+              <div
+                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-default"
               >
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
-                  <span className="text-2xl md:text-3xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">C</span>
+                <div className="transition-transform duration-300 group-hover:-translate-y-2">
+                  <img
+                    src="/mebalih.svg"
+                    alt="Mebalih"
+                    className="h-16 md:h-20 w-auto object-contain"
+                  />
                 </div>
                 <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  CloudBase
+                  Mebalih
                 </span>
-              </a>
+              </div>
 
-              {/* Sponsor 3: Placeholder */}
+              {/* Sponsor 3: Hivosen */}
               <a
-                href="#"
+                href="https://hivosen.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
-                  <span className="text-2xl md:text-3xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">D</span>
+                <div className="transition-transform duration-300 group-hover:-translate-y-2">
+                  <img
+                    src="/hivosen.png"
+                    alt="Hivosen"
+                    className="h-16 md:h-20 w-auto object-contain"
+                  />
                 </div>
                 <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  DevStack
+                  Hivosen
                 </span>
               </a>
 
