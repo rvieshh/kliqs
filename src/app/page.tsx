@@ -39,7 +39,8 @@ export default function HomePage() {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<FeatureTab>("shortener");
   const [url, setUrl] = useState("");
-  const [qrText, setQrText] = useState("");
+  const [qrInput, setQrInput] = useState("");
+  const [activeQrValue, setActiveQrValue] = useState("");
   const [bioUsername, setBioUsername] = useState("");
   const [result, setResult] = useState<ShortenedLink | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -122,6 +123,7 @@ export default function HomePage() {
     setActiveTab(tab);
     setError(null);
     setResult(null);
+    setActiveQrValue("");
   }
 
   // QR Code canvas ref for download
@@ -305,29 +307,40 @@ export default function HomePage() {
                   <div className="flex items-center w-full bg-white rounded-xl pl-5 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/40 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
                     <input
                       type="text"
-                      value={qrText}
+                      value={qrInput}
                       onChange={(e) => {
-                        setQrText(e.target.value);
+                        setQrInput(e.target.value);
                         if (error) setError(null);
                       }}
                       placeholder="Enter URL or text to generate QR Code..."
                       className="flex-1 py-3 text-base text-gray-900 bg-transparent placeholder:text-gray-400 focus:outline-none min-w-0"
                     />
-                    <div className="flex-shrink-0 flex items-center gap-2 px-5 py-3 text-[#635bff] font-semibold text-sm ml-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!qrInput.trim()) {
+                          setError("Please enter a URL or text.");
+                          return;
+                        }
+                        setError(null);
+                        setActiveQrValue(qrInput.trim());
+                      }}
+                      className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors cursor-pointer ml-3"
+                    >
                       <QrCode className="w-4 h-4" />
-                      Live Preview
-                    </div>
+                      Buat QR Code
+                    </button>
                   </div>
 
-                  {/* Live QR Code Render */}
-                  {qrText.trim() && (
-                    <div className="mt-8 flex flex-col items-center gap-5">
+                  {/* QR Code Render (only after button click) */}
+                  {activeQrValue && (
+                    <div className="mt-8 flex flex-col items-center gap-5 animate-fade-in-up">
                       <div
                         ref={qrRef}
                         className="bg-white p-6 rounded-xl border border-gray-100 shadow-md inline-block"
                       >
                         <QRCodeCanvas
-                          value={qrText.trim()}
+                          value={activeQrValue}
                           size={200}
                           bgColor="#ffffff"
                           fgColor="#1a1a2e"
