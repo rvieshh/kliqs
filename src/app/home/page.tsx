@@ -21,6 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
 import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 import { useI18n } from "@/lib/i18n/context";
 import { LanguageSelector } from "@/components/language-selector";
 
@@ -158,52 +159,9 @@ export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f9fc]">
       {/* ═══════════════════════════════════════════════════════════════════════
-          FLOATING PILL HEADER
+          FLOATING PILL HEADER (Responsive with Mobile Hamburger Menu)
       ═══════════════════════════════════════════════════════════════════════ */}
-      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
-        <nav className="bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-xl px-6 py-3.5 shadow-[0_2px_16px_rgba(0,0,0,0.04)] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.svg" alt="Kliqs.me" width={120} height={32} className="h-8 w-auto" />
-          </Link>
-
-          <div className="hidden md:flex items-center gap-7">
-            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              {dict.nav.shortener}
-            </a>
-            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              {dict.nav.analytics}
-            </a>
-            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              {dict.nav.qrCodes}
-            </a>
-            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              {dict.nav.microsite}
-            </a>
-            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              {dict.nav.pricing}
-            </a>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <LanguageSelector />
-            {session?.user ? (
-              <a
-                href="https://dash.kliqs.me/dashboard"
-                className="px-6 py-3 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] shadow-[0_2px_6px_rgba(99,91,255,0.15)] transition-all"
-              >
-                {dict.nav.dashboard}
-              </a>
-            ) : (
-              <a
-                href="https://dash.kliqs.me/login"
-                className="px-6 py-3 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] shadow-[0_2px_6px_rgba(99,91,255,0.15)] transition-all"
-              >
-                {dict.nav.loginRegister}
-              </a>
-            )}
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       {/* ═══════════════════════════════════════════════════════════════════════
           HERO SECTION
