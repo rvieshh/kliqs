@@ -1,5 +1,92 @@
-export const en = {
-  locale: "en" as "en" | "id",
+export interface Translations {
+  locale: string;
+  nav: {
+    shortener: string;
+    analytics: string;
+    qrCodes: string;
+    microsite: string;
+    pricing: string;
+    loginRegister: string;
+    dashboard: string;
+  };
+  hero: {
+    headline: string;
+    subtitle: string;
+    trust: string;
+  };
+  tabs: {
+    shortener: string;
+    qr: string;
+    bio: string;
+  };
+  shortener: {
+    placeholder: string;
+    button: string;
+    loading: string;
+    resultLabel: string;
+    copy: string;
+    copied: string;
+    error: string;
+    networkError: string;
+  };
+  qr: {
+    placeholder: string;
+    button: string;
+    download: string;
+    error: string;
+  };
+  bio: {
+    placeholder: string;
+    suffix: string;
+    button: string;
+    error: string;
+  };
+  guestWarning: string;
+  guestWarningCta: string;
+  guestWarningEnd: string;
+  features: {
+    title: string;
+    subtitle: string;
+    analytics: { title: string; description: string };
+    bioPages: { title: string; description: string };
+    qrStyles: { title: string; description: string };
+    edge: { title: string; description: string };
+  };
+  pricing: {
+    title: string;
+    subtitle: string;
+    free: { name: string; features: string[] };
+    pro: { name: string; features: string[] };
+    elite: { name: string; features: string[] };
+    platinum: { name: string; features: string[] };
+    period: string;
+    getStarted: string;
+    subscribe: string;
+    popular: string;
+  };
+  sponsors: {
+    label: string;
+    title: string;
+    description: string;
+    cta: string;
+    ctaSub: string;
+  };
+  authModal: {
+    title: string;
+    description: string;
+    google: string;
+    github: string;
+    terms: string;
+    termsLink: string;
+  };
+  langSelector: {
+    id: string;
+    en: string;
+  };
+}
+
+export const en: Translations = {
+  locale: "en",
   nav: {
     shortener: "Shortener",
     analytics: "Analytics",
@@ -107,6 +194,4 @@ export const en = {
     id: "Bahasa Indonesia",
     en: "English",
   },
-} as const;
-
-export type Translations = typeof en;
+};
