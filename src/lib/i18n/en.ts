@@ -26,6 +26,7 @@ export interface Translations {
   };
   sponsors: { label: string; title: string; description: string; cta: string; ctaSub: string };
   authModal: { title: string; description: string; google: string; github: string; terms: string; termsLink: string };
+  auth: { title: string; subtitle: string; googleBtn: string; githubBtn: string; termsDisclaimer: string; backToHome: string };
   langSelector: { id: string; en: string };
   terms: {
     title: string;
@@ -121,6 +122,14 @@ export const en: Translations = {
     termsLink: "Terms of Service",
   },
   langSelector: { id: "Bahasa Indonesia", en: "English" },
+  auth: {
+    title: "Welcome back",
+    subtitle: "Sign in to manage your shortened links",
+    googleBtn: "Continue with Google",
+    githubBtn: "Continue with GitHub",
+    termsDisclaimer: "By signing in, you agree to our Terms of Service and Privacy Policy.",
+    backToHome: "Back to homepage",
+  },
   terms: {
     title: "Terms of Service",
     lastUpdated: "Last updated: January 1, 2025",
