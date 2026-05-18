@@ -497,17 +497,17 @@ export default function HomePage() {
                 description="Track clicks, geographic data, and referrers as they happen."
               />
               <FeatureCard
-                icon={<User className="w-6 h-6 text-blue-500" />}
+                icon={<User className="w-6 h-6 text-[#635bff]" />}
                 title="Secure Bio Pages"
                 description="Create beautiful personal landing pages with SSL protection."
               />
               <FeatureCard
-                icon={<QrCode className="w-6 h-6 text-purple-500" />}
+                icon={<QrCode className="w-6 h-6 text-[#635bff]" />}
                 title="Custom QR Styles"
                 description="Generate branded QR codes with custom colors and logos."
               />
               <FeatureCard
-                icon={<Zap className="w-6 h-6 text-amber-500" />}
+                icon={<Zap className="w-6 h-6 text-[#635bff]" />}
                 title="Global Edge Delivery"
                 description="Sub-50ms redirects powered by worldwide edge infrastructure."
               />
@@ -740,8 +740,8 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-[#f7f9fc] rounded-2xl p-8 md:p-10 border border-gray-100 hover:border-[#635bff]/20 hover:shadow-sm transition-all">
-      <div className="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center mb-5 shadow-sm">
+    <div className="group bg-white rounded-2xl p-8 border border-gray-100 transition-all duration-300 ease-out hover:scale-[0.98] hover:shadow-[0_0_30px_rgba(99,91,255,0.15)] hover:border-purple-200 cursor-pointer">
+      <div className="w-12 h-12 rounded-xl bg-[#f7f9fc] border border-gray-100 flex items-center justify-center mb-4 shadow-sm transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-105">
         {icon}
       </div>
       <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
