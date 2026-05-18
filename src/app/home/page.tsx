@@ -740,8 +740,8 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="group bg-white rounded-2xl p-8 border border-gray-100 transition-all duration-300 ease-out hover:scale-[0.98] hover:shadow-[0_0_30px_rgba(99,91,255,0.15)] hover:border-purple-200 cursor-pointer">
-      <div className="w-12 h-12 rounded-xl bg-[#f7f9fc] border border-gray-100 flex items-center justify-center mb-4 shadow-sm transition-transform duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-105">
+    <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm transition-all duration-200 ease-out hover:scale-[0.985] hover:shadow-none cursor-pointer">
+      <div className="w-12 h-12 rounded-xl bg-[#f7f9fc] border border-gray-100 flex items-center justify-center mb-4 shadow-sm">
         {icon}
       </div>
       <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
