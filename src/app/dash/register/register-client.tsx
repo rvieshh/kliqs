@@ -2,95 +2,29 @@
 
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { AuthLanguageToggle } from "../login/login-client";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Login Client Component — HPanel Hostinger Style
-// Standalone auth page with floating language toggle.
+// Register Client Component — HPanel Hostinger Style
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface AuthStrings {
-  title: string;
-  subtitle: string;
   googleBtn: string;
   githubBtn: string;
   separator: string;
   emailPlaceholder: string;
   passwordPlaceholder: string;
-  loginBtn: string;
-  forgotPassword: string;
-  noAccount: string;
-  signUp: string;
-  cantAccess: string;
   termsDisclaimer: string;
-  backToHome: string;
   registerTitle: string;
   registerSubtitle: string;
   registerBtn: string;
   hasAccount: string;
   logIn: string;
-  resetTitle: string;
-  resetSubtitle: string;
-  resetBtn: string;
-  backToLogin: string;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Floating Language Toggle (top-right corner)
-// ─────────────────────────────────────────────────────────────────────────────
-
-export function AuthLanguageToggle({ locale }: { locale: "en" | "id" }) {
-  const router = useRouter();
-
-  function switchLocale(newLocale: "en" | "id") {
-    if (newLocale === locale) return;
-    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
-    router.refresh();
-  }
-
-  return (
-    <div className="fixed top-6 right-6 z-50">
-      <div className="relative flex items-center bg-white border border-gray-200 rounded-full p-1 w-[120px] h-[40px] shadow-sm">
-        {/* Sliding pill background */}
-        <div
-          className={`absolute top-1 h-[32px] w-[54px] bg-[#673de6]/10 rounded-full transition-transform duration-300 ease-in-out ${
-            locale === "id" ? "translate-x-0" : "translate-x-[58px]"
-          }`}
-        />
-
-        {/* ID Flag Button */}
-        <button
-          onClick={() => switchLocale("id")}
-          className={`relative z-10 flex items-center justify-center w-[54px] h-[32px] rounded-full transition-opacity duration-200 cursor-pointer ${
-            locale === "id" ? "opacity-100" : "opacity-50 hover:opacity-75"
-          }`}
-          aria-label="Switch to Bahasa Indonesia"
-        >
-          <Image src="/id.svg" alt="ID" width={20} height={20} className="w-5 h-5 rounded-sm" />
-        </button>
-
-        {/* EN Flag Button */}
-        <button
-          onClick={() => switchLocale("en")}
-          className={`relative z-10 flex items-center justify-center w-[54px] h-[32px] rounded-full transition-opacity duration-200 cursor-pointer ${
-            locale === "en" ? "opacity-100" : "opacity-50 hover:opacity-75"
-          }`}
-          aria-label="Switch to English"
-        >
-          <Image src="/en.svg" alt="EN" width={20} height={20} className="w-5 h-5 rounded-sm" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Main Login UI
-// ─────────────────────────────────────────────────────────────────────────────
-
-export function LoginClient({ auth, locale }: { auth: AuthStrings; locale: "en" | "id" }) {
+export function RegisterClient({ auth, locale }: { auth: AuthStrings; locale: "en" | "id" }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -107,12 +41,15 @@ export function LoginClient({ auth, locale }: { auth: AuthStrings; locale: "en" 
         {/* Card */}
         <div className="w-full max-w-[450px] bg-white rounded-2xl shadow-xl p-8 sm:p-10">
           {/* Title */}
-          <h1 className="text-[1.75rem] font-bold text-gray-900 text-center mb-2">
-            {auth.title}
+          <h1 className="text-[1.75rem] font-bold text-gray-900 text-center mb-1">
+            {auth.registerTitle}
           </h1>
+          <p className="text-sm text-gray-500 text-center mb-6">
+            {auth.registerSubtitle}
+          </p>
 
           {/* Social Login Buttons — 2-column grid */}
-          <div className="grid grid-cols-2 gap-4 mt-6 mb-6">
+          <div className="grid grid-cols-2 gap-4 mb-6">
             {/* Google */}
             <button
               onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
@@ -181,34 +118,25 @@ export function LoginClient({ auth, locale }: { auth: AuthStrings; locale: "en" 
               </div>
             </div>
 
-            {/* Forgot Password */}
-            <div className="text-right">
-              <a href="/reset-password" className="text-sm font-medium text-[#673de6] hover:text-[#522eb1] transition-colors">
-                {auth.forgotPassword}
-              </a>
-            </div>
-
             {/* Submit Button */}
             <button
               type="submit"
               className="w-full py-3.5 bg-[#673de6] text-white text-base font-semibold rounded-lg hover:bg-[#522eb1] active:bg-[#4527a0] transition-colors cursor-pointer shadow-[0_2px_8px_rgba(103,61,230,0.25)]"
             >
-              {auth.loginBtn}
+              {auth.registerBtn}
             </button>
           </form>
 
-          {/* Can't Access */}
-          <p className="mt-5 text-sm text-center text-[#673de6] font-medium">
-            <a href="/reset-password" className="hover:text-[#522eb1] transition-colors">
-              {auth.cantAccess}
-            </a>
+          {/* Terms */}
+          <p className="mt-5 text-xs text-center text-gray-400">
+            {auth.termsDisclaimer}
           </p>
 
-          {/* Register Link */}
+          {/* Login Link */}
           <p className="mt-4 text-sm text-center text-gray-500">
-            {auth.noAccount}{" "}
-            <a href="/register" className="font-semibold text-[#673de6] hover:text-[#522eb1] transition-colors">
-              {auth.signUp}
+            {auth.hasAccount}{" "}
+            <a href="/login" className="font-semibold text-[#673de6] hover:text-[#522eb1] transition-colors">
+              {auth.logIn}
             </a>
           </p>
         </div>

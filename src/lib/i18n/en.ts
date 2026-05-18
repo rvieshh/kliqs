@@ -26,7 +26,13 @@ export interface Translations {
   };
   sponsors: { label: string; title: string; description: string; cta: string; ctaSub: string };
   authModal: { title: string; description: string; google: string; github: string; terms: string; termsLink: string };
-  auth: { title: string; subtitle: string; googleBtn: string; githubBtn: string; facebookBtn: string; separator: string; emailPlaceholder: string; passwordPlaceholder: string; loginBtn: string; forgotPassword: string; noAccount: string; signUp: string; cantAccess: string; termsDisclaimer: string; backToHome: string };
+  auth: {
+    title: string; subtitle: string; googleBtn: string; githubBtn: string; separator: string;
+    emailPlaceholder: string; passwordPlaceholder: string; loginBtn: string; forgotPassword: string;
+    noAccount: string; signUp: string; cantAccess: string; termsDisclaimer: string; backToHome: string;
+    registerTitle: string; registerSubtitle: string; registerBtn: string; hasAccount: string; logIn: string;
+    resetTitle: string; resetSubtitle: string; resetBtn: string; backToLogin: string;
+  };
   langSelector: { id: string; en: string };
   terms: {
     title: string;
@@ -127,17 +133,25 @@ export const en: Translations = {
     subtitle: "Sign in to manage your shortened links",
     googleBtn: "Continue with Google",
     githubBtn: "Continue with GitHub",
-    facebookBtn: "Continue with Facebook",
     separator: "or",
     emailPlaceholder: "Email address",
     passwordPlaceholder: "Password",
     loginBtn: "Log in",
     forgotPassword: "Forgot password?",
     noAccount: "Don't have an account?",
-    signUp: "Sign Up",
+    signUp: "Register",
     cantAccess: "Can't Access Your Account?",
     termsDisclaimer: "By signing in, you agree to our Terms of Service and Privacy Policy.",
     backToHome: "Back to homepage",
+    registerTitle: "Create an account",
+    registerSubtitle: "Get started with Kliqs for free",
+    registerBtn: "Register",
+    hasAccount: "Already have an account?",
+    logIn: "Log in",
+    resetTitle: "Reset your password",
+    resetSubtitle: "Enter your email and we'll send you a reset link",
+    resetBtn: "Send reset link",
+    backToLogin: "Back to login",
   },
   terms: {
     title: "Terms of Service",
