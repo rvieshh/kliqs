@@ -559,15 +559,15 @@ export default function HomePage() {
           <div className="max-w-[1440px] mx-auto">
             {/* Split Intro Row */}
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-14">
-              <div className="lg:max-w-lg">
+              <div className="lg:max-w-3xl lg:flex-[7]">
                 <p className="text-sm font-bold uppercase tracking-widest text-[#635bff] mb-4">
                   {dict.sponsors.label}
                 </p>
-                <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 leading-tight">
                   {dict.sponsors.title}
                 </h2>
               </div>
-              <p className="text-lg md:text-xl text-gray-600 leading-relaxed lg:max-w-sm lg:pt-10">
+              <p className="text-lg md:text-xl text-gray-600 leading-relaxed lg:flex-[5] lg:pt-10">
                 {dict.sponsors.description}
               </p>
             </div>

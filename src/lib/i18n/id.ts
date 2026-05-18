@@ -3,11 +3,11 @@ import type { Translations } from "./en";
 export const id: Translations = {
   locale: "id",
   nav: {
-    shortener: "Pemendek",
-    analytics: "Analitik",
-    qrCodes: "Kode QR",
+    shortener: "Shortener",
+    analytics: "Analytics",
+    qrCodes: "QR Codes",
     microsite: "Microsite",
-    pricing: "Harga",
+    pricing: "Pricing",
     loginRegister: "Masuk / Daftar",
     dashboard: "Dashboard",
   },
@@ -17,7 +17,7 @@ export const id: Translations = {
     trust: "Dipercaya oleh 10.000+ kreator & developer di seluruh dunia",
   },
   tabs: {
-    shortener: "Pemendek",
+    shortener: "Shortener",
     qr: "Kode QR",
     bio: "Bio Page",
   },
