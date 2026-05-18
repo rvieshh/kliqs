@@ -1,15 +1,32 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Kliqs.me — Clean, Friendly Theme (s.id inspired)
+   Kliqs.me — Warm Modern SaaS Theme (s.id inspired)
    ───────────────────────────────────────────────────────────────────────────── */
 
 @theme inline {
   --font-sans: var(--font-inter);
+  --color-accent: #635bff;
+  --color-foreground: #1a1a2e;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-card: #ffffff;
+  --color-success: #10b981;
+  --color-background: #faf8f5;
+}
+
+:root {
+  --color-accent: #635bff;
+  --color-foreground: #1a1a2e;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-card: #ffffff;
+  --color-success: #10b981;
+  --color-background: #faf8f5;
 }
 
 body {
-  background: #ffffff;
+  background: #faf8f5;
   color: #1a1a2e;
   font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
 }
@@ -34,7 +51,7 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Dashboard utilities (reused from Phase 4)
+   Dashboard utilities (kept for /dashboard page compatibility)
    ───────────────────────────────────────────────────────────────────────────── */
 
 .card-shadow {
@@ -51,52 +68,26 @@ body {
 
 .input-focus:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  border-color: #635bff;
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.12);
 }
 
-/* Button lift for dashboard (darkens on hover) */
 .btn-lift {
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 .btn-lift:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-  background-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);
+  background-color: #5145e5;
 }
 
 .btn-lift:active {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 2px 6px rgba(99, 91, 255, 0.2);
 }
 
-/* Hero gradient for dashboard pages */
 .hero-gradient {
   position: relative;
   overflow: hidden;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Color references for dashboard (keeping compatibility)
-   ───────────────────────────────────────────────────────────────────────────── */
-
-:root {
-  --color-accent: #2563eb;
-  --color-foreground: #1a1a2e;
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-card: #ffffff;
-  --color-success: #10b981;
-  --color-background: #f9fafb;
-}
-
-@theme inline {
-  --color-accent: #2563eb;
-  --color-foreground: #1a1a2e;
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-card: #ffffff;
-  --color-success: #10b981;
-  --color-background: #f9fafb;
 }
