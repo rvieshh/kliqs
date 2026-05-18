@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="w-full border-t border-gray-200/60 bg-[#faf8f5]">
+    <footer className="w-full border-t border-gray-200/60 bg-[#f7f9fc]">
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Brand */}
