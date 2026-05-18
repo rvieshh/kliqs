@@ -32,7 +32,8 @@ function LanguageFlagToggle() {
       newPath = "/" + newLocale;
     }
 
-    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+    const domain = window.location.hostname.includes("kliqs.me") ? "; domain=.kliqs.me" : "";
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax${domain}`;
     router.push(newPath);
   }
 
