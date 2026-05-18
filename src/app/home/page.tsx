@@ -551,29 +551,93 @@ export default function HomePage() {
                 name="Platinum"
                 price="Rp25.000"
                 period="/bln"
-                features={["White-label solution", "Priority support 24/7", "Unlimited everything", "SLA guarantee"]}
+                features={["White-label", "Priority 24/7", "Unlimited everything", "SLA guarantee"]}
               />
             </div>
           </div>
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════════
-            SECTION: SPONSORS & PARTNERS
+            SECTION: SPONSORS (Paymenter Style - Light Mode)
         ═══════════════════════════════════════════════════════════════════════ */}
         <section className="w-full px-6 py-20 bg-white border-t border-gray-100">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Our Partners &amp; Sponsors
-            </h2>
-            <p className="text-sm text-gray-500 mb-10">
-              Supported by the best in the industry.
-            </p>
+          <div className="max-w-5xl mx-auto">
+            {/* Split Intro Row */}
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-12">
+              <div className="lg:max-w-md">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#635bff] mb-3">
+                  SPONSORS
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
+                  Building Together a Sustainable Future for Kliqs
+                </h2>
+              </div>
+              <p className="text-sm text-gray-500 leading-relaxed lg:max-w-sm lg:pt-8">
+                Our sponsors help us keep Kliqs free and accessible for everyone. 
+                Their support enables us to maintain edge infrastructure and deliver 
+                the fastest URL shortener experience.
+              </p>
+            </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-              <SponsorCard name="MarketKu" href="https://marketku.id" logo="/marketku.png" />
-              <SponsorCard name="CloudBase" href="#" logo="" />
-              <SponsorCard name="DevStack" href="#" logo="" />
-              <SponsorCard name="DataSync" href="#" logo="" />
+            {/* Sponsor Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {/* Sponsor 1: MarketKu */}
+              <a
+                href="https://marketku.id"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 bg-white hover:border-purple-500 transition-all duration-300 hover:shadow-md cursor-pointer"
+              >
+                <div className="transition-transform duration-300 group-hover:-translate-y-2">
+                  <img
+                    src="/marketku.png"
+                    alt="MarketKu"
+                    className="w-10 h-10 object-contain"
+                  />
+                </div>
+                <span className="absolute bottom-4 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  MarketKu
+                </span>
+              </a>
+
+              {/* Sponsor 2: Placeholder */}
+              <a
+                href="#"
+                className="group relative flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 bg-white hover:border-purple-500 transition-all duration-300 hover:shadow-md cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
+                  <span className="text-lg font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">C</span>
+                </div>
+                <span className="absolute bottom-4 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  CloudBase
+                </span>
+              </a>
+
+              {/* Sponsor 3: Placeholder */}
+              <a
+                href="#"
+                className="group relative flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 bg-white hover:border-purple-500 transition-all duration-300 hover:shadow-md cursor-pointer"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
+                  <span className="text-lg font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">D</span>
+                </div>
+                <span className="absolute bottom-4 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  DevStack
+                </span>
+              </a>
+
+              {/* CTA: Become a Sponsor */}
+              <a
+                href="#"
+                className="group flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/50 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
+              >
+                <span className="text-sm font-semibold text-gray-500 group-hover:text-[#635bff] transition-colors">
+                  Become a Sponsor ↗
+                </span>
+                <span className="text-xs text-gray-400 mt-1">
+                  (Get visibility/mo)
+                </span>
+              </a>
             </div>
           </div>
         </section>
@@ -742,37 +806,4 @@ function PricingCard({
   );
 }
 
-function SponsorCard({
-  name,
-  href,
-  logo,
-}: {
-  name: string;
-  href: string;
-  logo: string;
-}) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex flex-col items-center justify-center p-6 rounded-2xl border border-gray-200 hover:border-[#635bff]/30 bg-white hover:shadow-sm transition-all duration-300"
-    >
-      {/* Logo area */}
-      <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mb-3 grayscale group-hover:grayscale-0 transition-all duration-300 overflow-hidden">
-        {logo ? (
-          <img src={logo} alt={name} className="w-8 h-8 object-contain" />
-        ) : (
-          <span className="text-lg font-bold text-gray-400 group-hover:text-[#635bff] transition-colors">
-            {name.charAt(0)}
-          </span>
-        )}
-      </div>
-
-      {/* Name - reveals on hover */}
-      <span className="text-xs font-semibold text-gray-400 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-        {name}
-      </span>
-    </a>
-  );
-}
+// (End of file)
