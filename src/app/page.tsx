@@ -17,8 +17,7 @@ import { Footer } from "@/components/footer";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Landing Page — Kliqs.me
-// s.id-inspired: clean, friendly, approachable with bold typography.
-// Core focus: shorten links quickly and beautifully.
+// Modern SaaS with floating pill header and squircle corners.
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface ShortenedLink {
@@ -97,26 +96,29 @@ export default function HomePage() {
   return (
     <>
       {/* ═══════════════════════════════════════════════════════════════════════
-          NAVBAR
+          FLOATING PILL NAVBAR
       ═══════════════════════════════════════════════════════════════════════ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+        <nav className="bg-white/70 backdrop-blur-md border border-gray-200/50 rounded-2xl px-5 py-3 shadow-sm flex items-center gap-6">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center">
               <Link2 className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-extrabold text-gray-900 tracking-tight">
+            <span className="text-lg font-extrabold text-gray-900 tracking-tight">
               Kliqs
             </span>
           </Link>
 
+          {/* Separator */}
+          <div className="h-5 w-px bg-gray-200" />
+
           {/* Right Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {session?.user ? (
               <Link
                 href="/dashboard"
-                className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-full hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-colors"
               >
                 Dashboard
               </Link>
@@ -130,21 +132,21 @@ export default function HomePage() {
                 </Link>
                 <Link
                   href="/login"
-                  className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-full hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-colors"
                 >
                   Sign Up Free
                 </Link>
               </>
             )}
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* ═══════════════════════════════════════════════════════════════════════
           HERO SECTION
       ═══════════════════════════════════════════════════════════════════════ */}
       <main className="flex-1 flex flex-col bg-white">
-        <section className="w-full max-w-4xl mx-auto px-6 pt-36 pb-20 text-center">
+        <section className="w-full max-w-4xl mx-auto px-6 pt-44 pb-20 text-center">
           {/* Headline */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.1] tracking-tight mb-6">
             Shorten your links,
@@ -159,10 +161,10 @@ export default function HomePage() {
           </p>
 
           {/* ─────────────────────────────────────────────────────────────────
-              URL Input (Pill-shaped, s.id style)
+              URL Input (Squircle style — rounded-2xl)
           ───────────────────────────────────────────────────────────────── */}
           <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-            <div className="flex items-center w-full bg-gray-50 rounded-full p-1.5 border-2 border-gray-200 focus-within:border-blue-500 transition-colors shadow-sm">
+            <div className="flex items-center w-full bg-gray-50 rounded-2xl p-1.5 border-2 border-gray-200 focus-within:border-blue-500 transition-colors shadow-sm">
               <input
                 type="text"
                 value={url}
@@ -171,14 +173,14 @@ export default function HomePage() {
                   if (error) setError(null);
                 }}
                 placeholder="Paste your long URL here..."
-                className="flex-1 px-6 py-4 text-base text-gray-900 bg-transparent rounded-full placeholder:text-gray-400 focus:outline-none"
+                className="flex-1 px-5 py-4 text-base text-gray-900 bg-transparent rounded-xl placeholder:text-gray-400 focus:outline-none"
                 disabled={isLoading}
                 autoFocus
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-shrink-0 px-7 py-4 bg-blue-600 text-white font-bold text-base rounded-full hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                className="flex-shrink-0 px-7 py-4 bg-blue-600 text-white font-bold text-base rounded-xl hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
                 {isLoading ? (
                   <span className="flex items-center gap-2">
@@ -221,7 +223,7 @@ export default function HomePage() {
 
                 <button
                   onClick={handleCopy}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer ${
+                  className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 cursor-pointer ${
                     isCopied
                       ? "bg-green-50 text-green-600 border border-green-200"
                       : "bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100"
