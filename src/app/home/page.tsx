@@ -185,25 +185,17 @@ export default function HomePage() {
             {session?.user ? (
               <a
                 href="https://dash.kliqs.me/dashboard"
-                className="px-5 py-2 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
+                className="px-6 py-3 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] shadow-[0_2px_6px_rgba(99,91,255,0.15)] transition-all"
               >
                 Dashboard
               </a>
             ) : (
-              <>
-                <a
-                  href="https://dash.kliqs.me/login"
-                  className="hidden sm:inline-block px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
-                >
-                  Log in
-                </a>
-                <a
-                  href="https://dash.kliqs.me/login"
-                  className="px-5 py-2 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
-                >
-                  Sign Up Free
-                </a>
-              </>
+              <a
+                href="https://dash.kliqs.me/login"
+                className="px-6 py-3 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] shadow-[0_2px_6px_rgba(99,91,255,0.15)] transition-all"
+              >
+                Login / Register
+              </a>
             )}
           </div>
         </nav>
