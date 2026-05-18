@@ -1,4 +1,3 @@
-import { Link2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,13 +16,13 @@ export function Footer() {
             <Image src="/logo.svg" alt="Kliqs.me" width={120} height={36} className="h-9 w-auto" />
           </Link>
 
-          {/* Links */}
-          <div className="flex items-center gap-6 text-sm text-gray-400">
-            <Link href="/privacy" className="hover:text-gray-600 transition-colors">
-              Privacy Policy
-            </Link>
+          {/* Navigation Links */}
+          <nav className="flex items-center gap-6 text-sm font-medium text-gray-400">
             <Link href="/terms" className="hover:text-gray-600 transition-colors">
               Terms of Service
+            </Link>
+            <Link href="/privacy" className="hover:text-gray-600 transition-colors">
+              Privacy Policy
             </Link>
             <a
               href="https://github.com/rvieshh/kliqs"
@@ -33,7 +32,7 @@ export function Footer() {
             >
               GitHub
             </a>
-          </div>
+          </nav>
         </div>
 
         {/* Copyright */}
