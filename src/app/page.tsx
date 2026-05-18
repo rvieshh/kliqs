@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useRef, useCallback, FormEvent } from "react";
 import {
   Link2,
   Clipboard,
@@ -11,7 +11,9 @@ import {
   QrCode,
   User,
   X,
+  Download,
 } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
 import { Footer } from "@/components/footer";
@@ -51,10 +53,15 @@ export default function HomePage() {
     setResult(null);
     setIsCopied(false);
 
-    const trimmedUrl = url.trim();
+    let trimmedUrl = url.trim();
     if (!trimmedUrl) {
       setError("Please enter a URL.");
       return;
+    }
+
+    // Auto-prepend https:// if no protocol is provided
+    if (!/^https?:\/\//i.test(trimmedUrl)) {
+      trimmedUrl = `https://${trimmedUrl}`;
     }
 
     setIsLoading(true);
@@ -92,17 +99,6 @@ export default function HomePage() {
     setShowAuthModal(true);
   }
 
-  function handleQrSubmit(e: FormEvent) {
-    e.preventDefault();
-    // Placeholder — QR generation coming soon
-    if (!qrText.trim()) {
-      setError("Please enter a URL or text.");
-      return;
-    }
-    setError(null);
-    // TODO: QR generation logic
-  }
-
   async function handleCopy() {
     if (!result) return;
 
@@ -127,6 +123,19 @@ export default function HomePage() {
     setError(null);
     setResult(null);
   }
+
+  // QR Code canvas ref for download
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadQr = useCallback(() => {
+    const canvas = qrRef.current?.querySelector("canvas");
+    if (!canvas) return;
+
+    const link = document.createElement("a");
+    link.download = `kliqs-qr-${Date.now()}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f9fc]">
@@ -292,7 +301,7 @@ export default function HomePage() {
             {/* === KODE QR TAB === */}
             {activeTab === "qr" && (
               <div className="animate-fade-in-up">
-                <form onSubmit={handleQrSubmit} className="w-full max-w-2xl mx-auto">
+                <div className="w-full max-w-2xl mx-auto">
                   <div className="flex items-center w-full bg-white rounded-xl pl-5 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/40 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
                     <input
                       type="text"
@@ -304,15 +313,38 @@ export default function HomePage() {
                       placeholder="Enter URL or text to generate QR Code..."
                       className="flex-1 py-3 text-base text-gray-900 bg-transparent placeholder:text-gray-400 focus:outline-none min-w-0"
                     />
-                    <button
-                      type="submit"
-                      className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors cursor-pointer ml-3"
-                    >
+                    <div className="flex-shrink-0 flex items-center gap-2 px-5 py-3 text-[#635bff] font-semibold text-sm ml-3">
                       <QrCode className="w-4 h-4" />
-                      Generate QR
-                    </button>
+                      Live Preview
+                    </div>
                   </div>
-                </form>
+
+                  {/* Live QR Code Render */}
+                  {qrText.trim() && (
+                    <div className="mt-8 flex flex-col items-center gap-5">
+                      <div
+                        ref={qrRef}
+                        className="bg-white p-6 rounded-xl border border-gray-100 shadow-md inline-block"
+                      >
+                        <QRCodeCanvas
+                          value={qrText.trim()}
+                          size={200}
+                          bgColor="#ffffff"
+                          fgColor="#1a1a2e"
+                          level="H"
+                          includeMargin={false}
+                        />
+                      </div>
+                      <button
+                        onClick={handleDownloadQr}
+                        className="flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors cursor-pointer"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download QR
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
