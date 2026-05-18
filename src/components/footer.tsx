@@ -14,17 +14,17 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Kliqs.me" width={100} height={28} className="h-7 w-auto" />
+            <Image src="/logo.svg" alt="Kliqs.me" width={120} height={36} className="h-9 w-auto" />
           </Link>
 
           {/* Links */}
           <div className="flex items-center gap-6 text-sm text-gray-400">
-            <a href="#" className="hover:text-gray-600 transition-colors">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-gray-600 transition-colors">
-              Terms
-            </a>
+            <Link href="/privacy" className="hover:text-gray-600 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-gray-600 transition-colors">
+              Terms of Service
+            </Link>
             <a
               href="https://github.com/rvieshh/kliqs"
               target="_blank"
