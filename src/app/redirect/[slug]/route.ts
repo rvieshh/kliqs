@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GET /api/resolve/[slug]
+// GET /redirect/[slug]
 // ─────────────────────────────────────────────────────────────────────────────
 // High-performance slug resolution endpoint.
 // Called internally via middleware rewrite when a request hits kliqs.me/[slug].

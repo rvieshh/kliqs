@@ -16,7 +16,7 @@ export function Navbar() {
     <nav className="w-full border-b border-border/50 bg-card/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="https://home.kliqs.me" className="flex items-center gap-2 group">
           <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
             <Link2 className="w-4 h-4 text-white" />
           </div>
