@@ -481,8 +481,8 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════
             SECTION: PLATFORM FEATURES
         ═══════════════════════════════════════════════════════════════════════ */}
-        <section className="w-full px-6 py-20 bg-white border-t border-gray-100">
-          <div className="max-w-5xl mx-auto">
+        <section className="w-full px-6 md:px-12 py-20 bg-white border-t border-gray-100">
+          <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-3">
               Built for Speed & Scale
             </h2>
@@ -518,8 +518,8 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════
             SECTION: PRICING PLANS
         ═══════════════════════════════════════════════════════════════════════ */}
-        <section className="w-full px-6 py-20 bg-[#f7f9fc]">
-          <div className="max-w-5xl mx-auto">
+        <section className="w-full px-6 md:px-12 py-20 bg-[#f7f9fc]">
+          <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-3">
               Simple, Transparent Pricing
             </h2>
@@ -560,8 +560,8 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════
             SECTION: SPONSORS (Paymenter Style - Light Mode)
         ═══════════════════════════════════════════════════════════════════════ */}
-        <section className="w-full px-6 py-20 bg-white border-t border-gray-100">
-          <div className="max-w-5xl mx-auto">
+        <section className="w-full px-6 md:px-12 py-20 bg-white border-t border-gray-100">
+          <div className="max-w-7xl mx-auto">
             {/* Split Intro Row */}
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-12">
               <div className="lg:max-w-md">
@@ -580,22 +580,22 @@ export default function HomePage() {
             </div>
 
             {/* Sponsor Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {/* Sponsor 1: MarketKu */}
               <a
                 href="https://marketku.id"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 bg-white hover:border-purple-500 transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-10 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
                 <div className="transition-transform duration-300 group-hover:-translate-y-2">
                   <img
                     src="/marketku.png"
                     alt="MarketKu"
-                    className="w-10 h-10 object-contain"
+                    className="w-16 h-16 object-contain"
                   />
                 </div>
-                <span className="absolute bottom-4 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-5 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   MarketKu
                 </span>
               </a>
@@ -603,12 +603,12 @@ export default function HomePage() {
               {/* Sponsor 2: Placeholder */}
               <a
                 href="#"
-                className="group relative flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 bg-white hover:border-purple-500 transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-10 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
-                  <span className="text-lg font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">C</span>
+                <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
+                  <span className="text-xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">C</span>
                 </div>
-                <span className="absolute bottom-4 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-5 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   CloudBase
                 </span>
               </a>
@@ -616,12 +616,12 @@ export default function HomePage() {
               {/* Sponsor 3: Placeholder */}
               <a
                 href="#"
-                className="group relative flex flex-col items-center justify-center p-8 rounded-2xl border border-gray-200 bg-white hover:border-purple-500 transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-10 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
-                <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
-                  <span className="text-lg font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">D</span>
+                <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
+                  <span className="text-xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">D</span>
                 </div>
-                <span className="absolute bottom-4 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-5 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   DevStack
                 </span>
               </a>
@@ -629,12 +629,12 @@ export default function HomePage() {
               {/* CTA: Become a Sponsor */}
               <a
                 href="#"
-                className="group flex flex-col items-center justify-center p-8 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/50 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
+                className="group flex flex-col items-center justify-center p-10 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/30 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
               >
                 <span className="text-sm font-semibold text-gray-500 group-hover:text-[#635bff] transition-colors">
                   Become a Sponsor ↗
                 </span>
-                <span className="text-xs text-gray-400 mt-1">
+                <span className="text-xs text-gray-400 mt-1.5">
                   (Get visibility/mo)
                 </span>
               </a>
