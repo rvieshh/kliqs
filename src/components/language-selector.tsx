@@ -42,6 +42,9 @@ export function LanguageSelector() {
       newPath = "/" + newLocale;
     }
 
+    // Set cookie to persist user's explicit language preference
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+
     setIsOpen(false);
     router.push(newPath);
   }

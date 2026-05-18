@@ -75,16 +75,21 @@ export function middleware(request: NextRequest) {
       return NextResponse.rewrite(url);
     }
 
-    // If visiting root "/" or a non-locale path, detect locale via GeoIP
+    // If visiting root "/" or a non-locale path, detect locale via cookie-first, then GeoIP
     if (pathname === "/" || !supportedLocales.includes(pathLocale)) {
-      // Detect country from request headers (Vercel/Cloudflare provide these)
+      // Priority 1: Explicit user preference cookie
+      const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
+
+      // Priority 2: GeoIP from request headers (Vercel/Cloudflare)
       const country = (
         request.headers.get("x-vercel-ip-country") ||
         request.headers.get("cf-ipcountry") ||
         ""
       ).toString();
 
-      const detectedLocale = country.toUpperCase() === "ID" ? "id" : "en";
+      const detectedLocale = cookieLocale && supportedLocales.includes(cookieLocale)
+        ? cookieLocale
+        : country.toUpperCase() === "ID" ? "id" : "en";
 
       // Redirect root and non-locale paths to locale-prefixed equivalents
       if (pathname === "/") {
