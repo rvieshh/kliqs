@@ -78,11 +78,11 @@ export function middleware(request: NextRequest) {
     // If visiting root "/" or a non-locale path, detect locale via GeoIP
     if (pathname === "/" || !supportedLocales.includes(pathLocale)) {
       // Detect country from request headers (Vercel/Cloudflare provide these)
-      const country =
+      const country = (
         request.headers.get("x-vercel-ip-country") ||
         request.headers.get("cf-ipcountry") ||
-        request.geo?.country ||
-        "";
+        ""
+      ).toString();
 
       const detectedLocale = country.toUpperCase() === "ID" ? "id" : "en";
 
