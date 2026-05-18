@@ -21,6 +21,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
 import { Footer } from "@/components/footer";
+import { useI18n } from "@/lib/i18n/context";
+import { LanguageSelector } from "@/components/language-selector";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Landing Page — Kliqs.me
@@ -41,6 +43,7 @@ interface ShortenedLink {
 
 export default function HomePage() {
   const { data: session } = useSession();
+  const { locale, dict } = useI18n();
   const [activeTab, setActiveTab] = useState<FeatureTab>("shortener");
   const [url, setUrl] = useState("");
   const [qrInput, setQrInput] = useState("");
@@ -165,36 +168,37 @@ export default function HomePage() {
 
           <div className="hidden md:flex items-center gap-7">
             <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              Shortener
+              {dict.nav.shortener}
             </a>
             <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              Analytics
+              {dict.nav.analytics}
             </a>
             <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              QR Codes
+              {dict.nav.qrCodes}
             </a>
             <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              Microsite
+              {dict.nav.microsite}
             </a>
             <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
-              Pricing
+              {dict.nav.pricing}
             </a>
           </div>
 
           <div className="flex items-center gap-3">
+            <LanguageSelector />
             {session?.user ? (
               <a
                 href="https://dash.kliqs.me/dashboard"
                 className="px-6 py-3 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] shadow-[0_2px_6px_rgba(99,91,255,0.15)] transition-all"
               >
-                Dashboard
+                {dict.nav.dashboard}
               </a>
             ) : (
               <a
                 href="https://dash.kliqs.me/login"
                 className="px-6 py-3 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] shadow-[0_2px_6px_rgba(99,91,255,0.15)] transition-all"
               >
-                Login / Register
+                {dict.nav.loginRegister}
               </a>
             )}
           </div>
@@ -209,13 +213,12 @@ export default function HomePage() {
           <div className="w-full max-w-3xl mx-auto text-center">
             {/* Headline */}
             <h1 className="text-[2.75rem] sm:text-6xl lg:text-[4.25rem] font-black text-gray-900 leading-[1.08] tracking-tight mb-5">
-              Short Links, Big Impact.
+              {dict.hero.headline}
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl text-gray-500 max-w-lg mx-auto mb-10 leading-relaxed">
-              Shorten, share, and track your links with the simplest URL
-              shortener on the web.
+              {dict.hero.subtitle}
             </p>
 
             {/* ─────────────────────────────────────────────────────────────────
@@ -231,7 +234,7 @@ export default function HomePage() {
                 }`}
               >
                 <Link2 className="w-4 h-4" />
-                Shortener
+                {dict.tabs.shortener}
               </button>
               <button
                 onClick={() => handleTabChange("qr")}
@@ -242,7 +245,7 @@ export default function HomePage() {
                 }`}
               >
                 <QrCode className="w-4 h-4" />
-                Kode QR
+                {dict.tabs.qr}
               </button>
               <button
                 onClick={() => handleTabChange("bio")}
@@ -253,7 +256,7 @@ export default function HomePage() {
                 }`}
               >
                 <User className="w-4 h-4" />
-                Bio Page
+                {dict.tabs.bio}
               </button>
             </div>
 
@@ -465,7 +468,7 @@ export default function HomePage() {
 
             {/* Trust tagline */}
             <p className="mt-12 text-sm text-gray-400 font-medium">
-              Trusted by 10,000+ creators &amp; developers worldwide
+              {dict.hero.trust}
             </p>
           </div>
         </section>
@@ -476,32 +479,32 @@ export default function HomePage() {
         <section className="w-full px-8 md:px-16 py-24 bg-white border-t border-gray-100">
           <div className="max-w-[1440px] mx-auto">
             <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 text-center mb-4">
-              Built for Speed & Scale
+              {dict.features.title}
             </h2>
             <p className="text-lg md:text-xl text-gray-600 text-center mb-14 max-w-3xl mx-auto">
-              Everything you need to manage, track, and grow your online presence.
+              {dict.features.subtitle}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6 text-[#635bff]" />}
-                title="Real-time Analytics"
-                description="Track clicks, geographic data, and referrers as they happen."
+                title={dict.features.analytics.title}
+                description={dict.features.analytics.description}
               />
               <FeatureCard
                 icon={<User className="w-6 h-6 text-[#635bff]" />}
-                title="Secure Bio Pages"
-                description="Create beautiful personal landing pages with SSL protection."
+                title={dict.features.bioPages.title}
+                description={dict.features.bioPages.description}
               />
               <FeatureCard
                 icon={<QrCode className="w-6 h-6 text-[#635bff]" />}
-                title="Custom QR Styles"
-                description="Generate branded QR codes with custom colors and logos."
+                title={dict.features.qrStyles.title}
+                description={dict.features.qrStyles.description}
               />
               <FeatureCard
                 icon={<Zap className="w-6 h-6 text-[#635bff]" />}
-                title="Global Edge Delivery"
-                description="Sub-50ms redirects powered by worldwide edge infrastructure."
+                title={dict.features.edge.title}
+                description={dict.features.edge.description}
               />
             </div>
           </div>
@@ -513,10 +516,10 @@ export default function HomePage() {
         <section className="w-full px-8 md:px-16 py-24 bg-[#f7f9fc]">
           <div className="max-w-[1440px] mx-auto">
             <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 text-center mb-4">
-              Simple, Transparent Pricing
+              {dict.pricing.title}
             </h2>
             <p className="text-lg md:text-xl text-gray-600 text-center mb-14 max-w-3xl mx-auto">
-              Start free. Upgrade when you need more power.
+              {dict.pricing.subtitle}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -558,16 +561,14 @@ export default function HomePage() {
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-14">
               <div className="lg:max-w-lg">
                 <p className="text-sm font-bold uppercase tracking-widest text-[#635bff] mb-4">
-                  SPONSORS
+                  {dict.sponsors.label}
                 </p>
                 <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
-                  Building Together a Sustainable Future for Kliqs
+                  {dict.sponsors.title}
                 </h2>
               </div>
               <p className="text-lg md:text-xl text-gray-600 leading-relaxed lg:max-w-sm lg:pt-10">
-                Our sponsors help us keep Kliqs free and accessible for everyone. 
-                Their support enables us to maintain edge infrastructure and deliver 
-                the fastest URL shortener experience.
+                {dict.sponsors.description}
               </p>
             </div>
 
@@ -633,10 +634,10 @@ export default function HomePage() {
                 className="group flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/30 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
               >
                 <span className="text-lg font-bold text-gray-500 group-hover:text-[#635bff] transition-colors">
-                  Become a Sponsor ↗
+                  {dict.sponsors.cta} ↗
                 </span>
                 <span className="text-sm text-gray-400 mt-2">
-                  (Get visibility/mo)
+                  {dict.sponsors.ctaSub}
                 </span>
               </a>
             </div>
