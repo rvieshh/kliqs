@@ -1,5 +1,5 @@
 export const en = {
-  locale: "en",
+  locale: "en" as "en" | "id",
   nav: {
     shortener: "Shortener",
     analytics: "Analytics",
