@@ -1,25 +1,26 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Footer Component
-// Minimal, clean footer with Kliqs branding on warm off-white bg.
-// Accepts optional locale prop for locale-prefixed legal page links.
+// Footer Component (Client)
+// Locale-aware footer that dynamically routes legal links based on active locale.
+// Uses useParams() to automatically detect the current [locale] segment.
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface FooterProps {
-  locale?: string;
-}
-
-export function Footer({ locale }: FooterProps = {}) {
-  const prefix = locale ? `/${locale}` : "";
+export function Footer() {
+  const params = useParams();
+  const locale = (params?.locale as string) || "en";
+  const prefix = `/${locale}`;
 
   return (
     <footer className="w-full border-t border-gray-200/60 bg-[#f7f9fc]">
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Brand */}
-          <Link href={prefix || "/"} className="flex items-center gap-2">
+          <Link href={prefix} className="flex items-center gap-2">
             <Image src="/logo.svg" alt="Kliqs.me" width={120} height={36} className="h-9 w-auto" />
           </Link>
 
