@@ -51,7 +51,7 @@ export default async function TermsPage({ params }: Props) {
         </div>
       </main>
 
-      <Footer locale={locale} />
+      <Footer />
     </div>
   );
 }

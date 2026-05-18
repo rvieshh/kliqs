@@ -5,39 +5,22 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // ─────────────────────────────────────────────────────────────────────────────
-<<<<<<< HEAD
-// Footer Component
-// Minimal, clean footer with Kliqs branding on warm off-white bg.
-// Accepts optional locale prop for locale-prefixed legal page links.
-// ─────────────────────────────────────────────────────────────────────────────
-
-interface FooterProps {
-  locale?: string;
-}
-
-export function Footer({ locale }: FooterProps = {}) {
-  const prefix = locale ? `/${locale}` : "";
-=======
 // Footer Component (Client)
 // Locale-aware footer that dynamically routes legal links based on active locale.
+// Uses useParams() to automatically detect the current [locale] segment.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function Footer() {
   const params = useParams();
   const locale = (params?.locale as string) || "en";
   const prefix = `/${locale}`;
->>>>>>> 1d9ef55 (fix(routing): expand middleware geoip redirection to include legal paths and fix footer links)
 
   return (
     <footer className="w-full border-t border-gray-200/60 bg-[#f7f9fc]">
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Brand */}
-<<<<<<< HEAD
-          <Link href={prefix || "/"} className="flex items-center gap-2">
-=======
           <Link href={prefix} className="flex items-center gap-2">
->>>>>>> 1d9ef55 (fix(routing): expand middleware geoip redirection to include legal paths and fix footer links)
             <Image src="/logo.svg" alt="Kliqs.me" width={120} height={36} className="h-9 w-auto" />
           </Link>
 

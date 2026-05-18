@@ -51,7 +51,7 @@ export default async function PrivacyPage({ params }: Props) {
         </div>
       </main>
 
-      <Footer locale={locale} />
+      <Footer />
     </div>
   );
 }
