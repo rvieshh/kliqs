@@ -15,8 +15,8 @@ import { Footer } from "@/components/footer";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Landing Page — Kliqs.me
-// s.id-inspired: warm off-white bg, clean full-width header, pill input
-// with integrated CTA button, expansive single-column hero layout.
+// Professional SaaS: floating pill header (rounded-xl), warm off-white bg,
+// refined soft-square corners (rounded-xl containers, rounded-lg buttons).
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface ShortenedLink {
@@ -93,47 +93,47 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf8f5]">
+    <div className="min-h-screen flex flex-col bg-[#f7f9fc]">
       {/* ═══════════════════════════════════════════════════════════════════════
-          HEADER — Full-width, clean bar with logo + nav + CTA
+          FLOATING PILL HEADER — Fixed, centered, contained width, rounded-xl
       ═══════════════════════════════════════════════════════════════════════ */}
-      <header className="w-full border-b border-gray-200/60 bg-[#faf8f5]">
-        <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
+      <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
+        <nav className="bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-xl px-6 py-3.5 shadow-[0_2px_16px_rgba(0,0,0,0.04)] flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-[#635bff] flex items-center justify-center">
-              <Link2 className="w-[18px] h-[18px] text-white" />
+            <div className="w-8 h-8 rounded-lg bg-[#635bff] flex items-center justify-center">
+              <Link2 className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-extrabold text-gray-900 tracking-tight">
+            <span className="text-lg font-extrabold text-gray-900 tracking-tight">
               Kliqs.me
             </span>
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+          <div className="hidden md:flex items-center gap-7">
+            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
               Shortener
             </a>
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
               Analytics
             </a>
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
               QR Codes
             </a>
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
               Microsite
             </a>
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            <a href="#" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
               Pricing
             </a>
-          </nav>
+          </div>
 
           {/* Auth CTA */}
           <div className="flex items-center gap-3">
             {session?.user ? (
               <Link
                 href="/dashboard"
-                className="px-5 py-2.5 bg-[#635bff] text-white text-sm font-semibold rounded-full hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
+                className="px-5 py-2 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
               >
                 Dashboard
               </Link>
@@ -141,27 +141,27 @@ export default function HomePage() {
               <>
                 <Link
                   href="/login"
-                  className="hidden sm:inline-block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                  className="hidden sm:inline-block px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/login"
-                  className="px-5 py-2.5 bg-[#635bff] text-white text-sm font-semibold rounded-full hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
+                  className="px-5 py-2 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] transition-colors"
                 >
                   Sign Up Free
                 </Link>
               </>
             )}
           </div>
-        </div>
+        </nav>
       </header>
 
       {/* ═══════════════════════════════════════════════════════════════════════
           HERO SECTION — Expansive, single-column focused
       ═══════════════════════════════════════════════════════════════════════ */}
       <main className="flex-1 flex flex-col">
-        <section className="flex-1 flex flex-col items-center justify-center px-6 py-20 sm:py-28">
+        <section className="flex-1 flex flex-col items-center justify-center px-6 pt-40 pb-20 sm:pt-48 sm:pb-28">
           <div className="w-full max-w-3xl mx-auto text-center">
             {/* Headline */}
             <h1 className="text-[2.75rem] sm:text-6xl lg:text-[4.25rem] font-black text-gray-900 leading-[1.08] tracking-tight mb-5">
@@ -175,10 +175,10 @@ export default function HomePage() {
             </p>
 
             {/* ─────────────────────────────────────────────────────────────────
-                URL INPUT — Pill-shaped container with integrated button
+                URL INPUT — rounded-xl container with integrated button (rounded-lg)
             ───────────────────────────────────────────────────────────────── */}
             <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-              <div className="flex items-center w-full bg-white rounded-full pl-6 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/50 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
+              <div className="flex items-center w-full bg-white rounded-xl pl-5 pr-2 py-2 border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] focus-within:border-[#635bff]/40 focus-within:shadow-[0_2px_20px_rgba(99,91,255,0.08)] transition-all">
                 <input
                   type="text"
                   value={url}
@@ -194,7 +194,7 @@ export default function HomePage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-shrink-0 flex items-center gap-2 px-6 py-3.5 bg-[#635bff] text-white font-semibold text-sm rounded-full hover:bg-[#5145e5] active:bg-[#4538d4] disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer ml-3"
+                  className="flex-shrink-0 flex items-center gap-2 px-5 py-3 bg-[#635bff] text-white font-semibold text-sm rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] disabled:opacity-60 disabled:cursor-not-allowed transition-colors cursor-pointer ml-3"
                 >
                   {isLoading ? (
                     <>
@@ -219,10 +219,10 @@ export default function HomePage() {
             </form>
 
             {/* ─────────────────────────────────────────────────────────────────
-                Result Card
+                Result Card — rounded-xl
             ───────────────────────────────────────────────────────────────── */}
             {result && (
-              <div className="mt-8 w-full max-w-2xl mx-auto bg-white rounded-2xl p-6 shadow-md border border-gray-100 animate-fade-in-up">
+              <div className="mt-8 w-full max-w-2xl mx-auto bg-white rounded-xl p-6 shadow-md border border-gray-100 animate-fade-in-up">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0 text-left">
                     <p className="text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1.5">
@@ -240,7 +240,7 @@ export default function HomePage() {
 
                   <button
                     onClick={handleCopy}
-                    className={`flex items-center gap-2 px-5 py-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer ${
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 cursor-pointer ${
                       isCopied
                         ? "bg-green-50 text-green-600 border border-green-200"
                         : "bg-[#635bff]/5 text-[#635bff] hover:bg-[#635bff]/10 border border-[#635bff]/10"
