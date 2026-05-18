@@ -531,38 +531,38 @@ export default function HomePage() {
             </div>
 
             {/* Sponsor Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
               {/* Sponsor 1: MarketKu */}
               <a
                 href="https://marketku.id"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-6 md:p-10 lg:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
                 <div className="transition-transform duration-300 group-hover:-translate-y-2">
                   <img
                     src="/marketku.png"
                     alt="MarketKu"
-                    className="h-16 md:h-20 w-auto object-contain"
+                    className="h-14 md:h-16 lg:h-20 w-auto object-contain"
                   />
                 </div>
-                <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-4 md:bottom-5 text-xs md:text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   MarketKu
                 </span>
               </a>
 
               {/* Sponsor 2: Mebalih (no link) */}
               <div
-                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-default"
+                className="group relative flex flex-col items-center justify-center p-6 md:p-10 lg:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-default"
               >
                 <div className="transition-transform duration-300 group-hover:-translate-y-2">
                   <img
                     src="/mebalih.svg"
                     alt="Mebalih"
-                    className="h-16 md:h-20 w-auto object-contain"
+                    className="h-14 md:h-16 lg:h-20 w-auto object-contain"
                   />
                 </div>
-                <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-4 md:bottom-5 text-xs md:text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   Mebalih
                 </span>
               </div>
@@ -572,16 +572,16 @@ export default function HomePage() {
                 href="https://hivosen.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-6 md:p-10 lg:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
                 <div className="transition-transform duration-300 group-hover:-translate-y-2">
                   <img
                     src="/hivosen.png"
                     alt="Hivosen"
-                    className="h-16 md:h-20 w-auto object-contain"
+                    className="h-14 md:h-16 lg:h-20 w-auto object-contain"
                   />
                 </div>
-                <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-4 md:bottom-5 text-xs md:text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   Hivosen
                 </span>
               </a>
@@ -589,12 +589,12 @@ export default function HomePage() {
               {/* CTA: Become a Sponsor */}
               <a
                 href="#"
-                className="group flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/30 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
+                className="group flex flex-col items-center justify-center p-6 md:p-10 lg:p-14 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/30 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
               >
-                <span className="text-lg font-bold text-gray-500 group-hover:text-[#635bff] transition-colors">
+                <span className="text-base md:text-lg font-bold text-gray-500 group-hover:text-[#635bff] transition-colors text-center">
                   {dict.sponsors.cta} ↗
                 </span>
-                <span className="text-sm text-gray-400 mt-2">
+                <span className="text-xs md:text-sm text-gray-400 mt-2 text-center">
                   {dict.sponsors.ctaSub}
                 </span>
               </a>
