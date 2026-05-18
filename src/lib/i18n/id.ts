@@ -7,7 +7,7 @@ export const id: Translations = {
     analytics: "Analytics",
     qrCodes: "QR Codes",
     microsite: "Microsite",
-    pricing: "Pricing",
+    pricing: "Berlangganan",
     loginRegister: "Masuk / Daftar",
     dashboard: "Dashboard",
   },

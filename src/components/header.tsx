@@ -7,13 +7,13 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n/context";
-import { LanguageSelector } from "@/components/language-selector";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Mobile Language Toggle — iOS-style segmented control with flag icons
+// Language Flag Toggle — iOS-style segmented control with flag icons
+// Shared between desktop header and mobile menu
 // ─────────────────────────────────────────────────────────────────────────────
 
-function MobileLanguageToggle() {
+function LanguageFlagToggle() {
   const { locale } = useI18n();
   const pathname = usePathname();
   const router = useRouter();
@@ -139,9 +139,9 @@ export function Header() {
             ))}
           </div>
 
-          {/* Desktop Right Side: Language Selector + CTA */}
+          {/* Desktop Right Side: Language Toggle + CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <LanguageSelector />
+            <LanguageFlagToggle />
             <a
               href={ctaHref}
               className="px-6 py-3 bg-[#635bff] text-white text-sm font-semibold rounded-lg hover:bg-[#5145e5] active:bg-[#4538d4] shadow-[0_2px_6px_rgba(99,91,255,0.15)] transition-all"
@@ -201,7 +201,7 @@ export function Header() {
                 <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">
                   Language
                 </p>
-                <MobileLanguageToggle />
+                <LanguageFlagToggle />
               </div>
 
               {/* Divider */}
