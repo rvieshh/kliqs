@@ -26,7 +26,7 @@ export interface Translations {
   };
   sponsors: { label: string; title: string; description: string; cta: string; ctaSub: string };
   authModal: { title: string; description: string; google: string; github: string; terms: string; termsLink: string };
-  auth: { title: string; subtitle: string; googleBtn: string; githubBtn: string; termsDisclaimer: string; backToHome: string };
+  auth: { title: string; subtitle: string; googleBtn: string; githubBtn: string; facebookBtn: string; separator: string; emailPlaceholder: string; passwordPlaceholder: string; loginBtn: string; forgotPassword: string; noAccount: string; signUp: string; cantAccess: string; termsDisclaimer: string; backToHome: string };
   langSelector: { id: string; en: string };
   terms: {
     title: string;
@@ -123,10 +123,19 @@ export const en: Translations = {
   },
   langSelector: { id: "Bahasa Indonesia", en: "English" },
   auth: {
-    title: "Welcome back",
+    title: "Log in",
     subtitle: "Sign in to manage your shortened links",
     googleBtn: "Continue with Google",
     githubBtn: "Continue with GitHub",
+    facebookBtn: "Continue with Facebook",
+    separator: "or",
+    emailPlaceholder: "Email address",
+    passwordPlaceholder: "Password",
+    loginBtn: "Log in",
+    forgotPassword: "Forgot password?",
+    noAccount: "Don't have an account?",
+    signUp: "Sign Up",
+    cantAccess: "Can't Access Your Account?",
     termsDisclaimer: "By signing in, you agree to our Terms of Service and Privacy Policy.",
     backToHome: "Back to homepage",
   },
