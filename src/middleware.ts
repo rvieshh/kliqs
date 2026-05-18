@@ -62,12 +62,41 @@ export function middleware(request: NextRequest) {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // HOME DOMAIN: home.kliqs.me → Landing page & marketing
+  // HOME DOMAIN: home.kliqs.me → Landing page & marketing (with i18n)
   // ─────────────────────────────────────────────────────────────────────────
   if (currentHost === HOME_DOMAIN) {
-    // Rewrite all requests to /home/* internal path
-    const url = new URL(`/home${pathname === "/" ? "" : pathname}`, request.url);
-    return NextResponse.rewrite(url);
+    const supportedLocales = ["en", "id"];
+
+    // Check if the path already starts with a supported locale
+    const pathLocale = pathname.split("/")[1];
+    if (supportedLocales.includes(pathLocale)) {
+      // Already on a locale path — rewrite to /home/[locale]/*
+      const url = new URL(`/home${pathname}`, request.url);
+      return NextResponse.rewrite(url);
+    }
+
+    // If visiting root "/" or a non-locale path, detect locale via GeoIP
+    if (pathname === "/" || !supportedLocales.includes(pathLocale)) {
+      // Detect country from request headers (Vercel/Cloudflare provide these)
+      const country =
+        request.headers.get("x-vercel-ip-country") ||
+        request.headers.get("cf-ipcountry") ||
+        request.geo?.country ||
+        "";
+
+      const detectedLocale = country.toUpperCase() === "ID" ? "id" : "en";
+
+      // Redirect root to locale-prefixed path
+      if (pathname === "/") {
+        return NextResponse.redirect(
+          new URL(`https://${HOME_DOMAIN}/${detectedLocale}`, request.url)
+        );
+      }
+
+      // Non-locale paths like /terms, /privacy — rewrite to /home/*
+      const url = new URL(`/home${pathname}`, request.url);
+      return NextResponse.rewrite(url);
+    }
   }
 
   // ─────────────────────────────────────────────────────────────────────────
