@@ -481,16 +481,16 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════
             SECTION: PLATFORM FEATURES
         ═══════════════════════════════════════════════════════════════════════ */}
-        <section className="w-full px-6 md:px-12 py-20 bg-white border-t border-gray-100">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-3">
+        <section className="w-full px-8 md:px-16 py-24 bg-white border-t border-gray-100">
+          <div className="max-w-[1440px] mx-auto">
+            <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 text-center mb-4">
               Built for Speed & Scale
             </h2>
-            <p className="text-base text-gray-500 text-center mb-12 max-w-lg mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 text-center mb-14 max-w-3xl mx-auto">
               Everything you need to manage, track, and grow your online presence.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6 text-[#635bff]" />}
                 title="Real-time Analytics"
@@ -518,16 +518,16 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════
             SECTION: PRICING PLANS
         ═══════════════════════════════════════════════════════════════════════ */}
-        <section className="w-full px-6 md:px-12 py-20 bg-[#f7f9fc]">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-3">
+        <section className="w-full px-8 md:px-16 py-24 bg-[#f7f9fc]">
+          <div className="max-w-[1440px] mx-auto">
+            <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 text-center mb-4">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-base text-gray-500 text-center mb-12 max-w-lg mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 text-center mb-14 max-w-3xl mx-auto">
               Start free. Upgrade when you need more power.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               <PricingCard
                 name="Free"
                 price="Rp0"
@@ -560,19 +560,19 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════════
             SECTION: SPONSORS (Paymenter Style - Light Mode)
         ═══════════════════════════════════════════════════════════════════════ */}
-        <section className="w-full px-6 md:px-12 py-20 bg-white border-t border-gray-100">
-          <div className="max-w-7xl mx-auto">
+        <section className="w-full px-8 md:px-16 py-24 bg-white border-t border-gray-100">
+          <div className="max-w-[1440px] mx-auto">
             {/* Split Intro Row */}
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-12">
-              <div className="lg:max-w-md">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#635bff] mb-3">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-14">
+              <div className="lg:max-w-lg">
+                <p className="text-sm font-bold uppercase tracking-widest text-[#635bff] mb-4">
                   SPONSORS
                 </p>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight">
+                <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
                   Building Together a Sustainable Future for Kliqs
                 </h2>
               </div>
-              <p className="text-sm text-gray-500 leading-relaxed lg:max-w-sm lg:pt-8">
+              <p className="text-lg md:text-xl text-gray-600 leading-relaxed lg:max-w-sm lg:pt-10">
                 Our sponsors help us keep Kliqs free and accessible for everyone. 
                 Their support enables us to maintain edge infrastructure and deliver 
                 the fastest URL shortener experience.
@@ -580,22 +580,22 @@ export default function HomePage() {
             </div>
 
             {/* Sponsor Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
               {/* Sponsor 1: MarketKu */}
               <a
                 href="https://marketku.id"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative flex flex-col items-center justify-center p-10 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
                 <div className="transition-transform duration-300 group-hover:-translate-y-2">
                   <img
                     src="/marketku.png"
                     alt="MarketKu"
-                    className="w-16 h-16 object-contain"
+                    className="h-16 md:h-20 w-auto object-contain"
                   />
                 </div>
-                <span className="absolute bottom-5 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   MarketKu
                 </span>
               </a>
@@ -603,12 +603,12 @@ export default function HomePage() {
               {/* Sponsor 2: Placeholder */}
               <a
                 href="#"
-                className="group relative flex flex-col items-center justify-center p-10 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
-                <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
-                  <span className="text-xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">C</span>
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
+                  <span className="text-2xl md:text-3xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">C</span>
                 </div>
-                <span className="absolute bottom-5 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   CloudBase
                 </span>
               </a>
@@ -616,12 +616,12 @@ export default function HomePage() {
               {/* Sponsor 3: Placeholder */}
               <a
                 href="#"
-                className="group relative flex flex-col items-center justify-center p-10 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
+                className="group relative flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border border-gray-100 bg-gray-50/50 hover:border-purple-500 hover:bg-white transition-all duration-300 hover:shadow-md cursor-pointer"
               >
-                <div className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
-                  <span className="text-xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">D</span>
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gray-100 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-2">
+                  <span className="text-2xl md:text-3xl font-bold text-gray-300 group-hover:text-[#635bff] transition-colors duration-300">D</span>
                 </div>
-                <span className="absolute bottom-5 text-xs font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <span className="absolute bottom-5 text-sm font-semibold text-gray-500 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   DevStack
                 </span>
               </a>
@@ -629,12 +629,12 @@ export default function HomePage() {
               {/* CTA: Become a Sponsor */}
               <a
                 href="#"
-                className="group flex flex-col items-center justify-center p-10 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/30 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
+                className="group flex flex-col items-center justify-center p-10 md:p-14 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50/30 hover:border-[#635bff]/40 hover:bg-[#635bff]/[0.02] transition-all duration-300 cursor-pointer"
               >
-                <span className="text-sm font-semibold text-gray-500 group-hover:text-[#635bff] transition-colors">
+                <span className="text-lg font-bold text-gray-500 group-hover:text-[#635bff] transition-colors">
                   Become a Sponsor ↗
                 </span>
-                <span className="text-xs text-gray-400 mt-1.5">
+                <span className="text-sm text-gray-400 mt-2">
                   (Get visibility/mo)
                 </span>
               </a>
@@ -740,12 +740,12 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-[#f7f9fc] rounded-2xl p-6 border border-gray-100 hover:border-[#635bff]/20 hover:shadow-sm transition-all">
-      <div className="w-12 h-12 rounded-xl bg-white border border-gray-100 flex items-center justify-center mb-4 shadow-sm">
+    <div className="bg-[#f7f9fc] rounded-2xl p-8 md:p-10 border border-gray-100 hover:border-[#635bff]/20 hover:shadow-sm transition-all">
+      <div className="w-14 h-14 rounded-xl bg-white border border-gray-100 flex items-center justify-center mb-5 shadow-sm">
         {icon}
       </div>
-      <h3 className="text-base font-bold text-gray-900 mb-1.5">{title}</h3>
-      <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
+      <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+      <p className="text-base text-gray-500 leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -765,28 +765,28 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`relative bg-white rounded-2xl p-6 border transition-all hover:shadow-md ${
+      className={`relative bg-white rounded-2xl p-8 md:p-10 border transition-all hover:shadow-md ${
         popular
           ? "border-[#635bff] shadow-sm ring-1 ring-[#635bff]/10"
           : "border-gray-100 hover:border-gray-200"
       }`}
     >
       {popular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-[#635bff] text-white text-xs font-bold rounded-full">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-[#635bff] text-white text-sm font-bold rounded-full">
           Most Popular
         </div>
       )}
 
-      <h3 className="text-lg font-bold text-gray-900 mb-1">{name}</h3>
-      <div className="flex items-baseline gap-1 mb-5">
-        <span className="text-2xl font-extrabold text-gray-900">{price}</span>
-        <span className="text-sm text-gray-400">{period}</span>
+      <h3 className="text-2xl font-bold text-gray-900 mb-2">{name}</h3>
+      <div className="flex items-baseline gap-1 mb-6">
+        <span className="text-4xl md:text-5xl font-extrabold text-gray-900">{price}</span>
+        <span className="text-base text-gray-400">{period}</span>
       </div>
 
-      <ul className="space-y-2.5 mb-6">
+      <ul className="space-y-3 mb-8">
         {features.map((f, i) => (
-          <li key={i} className="flex items-center gap-2 text-sm text-gray-600">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#635bff] flex-shrink-0" />
+          <li key={i} className="flex items-center gap-2.5 text-base text-gray-600">
+            <span className="w-2 h-2 rounded-full bg-[#635bff] flex-shrink-0" />
             {f}
           </li>
         ))}
@@ -794,7 +794,7 @@ function PricingCard({
 
       <a
         href="https://dash.kliqs.me/login"
-        className={`block w-full text-center py-2.5 text-sm font-semibold rounded-xl transition-colors ${
+        className={`block w-full text-center py-4 px-8 text-lg font-semibold rounded-xl transition-colors ${
           popular
             ? "bg-[#635bff] text-white hover:bg-[#5145e5]"
             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
