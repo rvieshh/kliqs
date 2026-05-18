@@ -13,16 +13,31 @@ import { generateSlug } from "@/lib/generate-slug";
 // Response (201):
 //   { "id": "...", "slug": "xY3kP", "shortUrl": "https://kliqs.me/xY3kP", ... }
 //
-// Collision Handling Strategy:
-//   - Generate a slug and attempt INSERT.
-//   - If a unique constraint violation occurs (P2002), retry with a new slug.
-//   - Max 5 retries before failing (statistically near-impossible to exhaust).
+// CORS: Allows requests from home.kliqs.me (cross-subdomain).
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MAX_RETRIES = 5;
 const ANON_COOKIE_NAME = "kliqs_anon_id";
 const ANON_COOKIE_MAX_AGE = 30 * 24 * 60 * 60; // 30 days in seconds
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "kliqs.me";
+
+const ALLOWED_ORIGINS = [
+  "https://home.kliqs.me",
+  "http://localhost:3000",
+];
+
+function getCorsHeaders(origin: string | null) {
+  const headers = new Headers();
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    headers.set("Access-Control-Allow-Origin", origin);
+  } else {
+    headers.set("Access-Control-Allow-Origin", ALLOWED_ORIGINS[0]);
+  }
+  headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  headers.set("Access-Control-Allow-Credentials", "true");
+  return headers;
+}
 
 /**
  * Validates that a string is a well-formed, absolute HTTP(S) URL.
@@ -36,7 +51,21 @@ function isValidUrl(url: string): boolean {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// OPTIONS — Handle CORS preflight
+// ─────────────────────────────────────────────────────────────────────────────
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  return new NextResponse(null, {
+    status: 200,
+    headers: getCorsHeaders(origin),
+  });
+}
+
 export async function POST(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
+
   // ─────────────────────────────────────────────────────────────────────────
   // 1. Parse & Validate Input
   // ─────────────────────────────────────────────────────────────────────────
@@ -47,7 +76,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json(
       { error: "Invalid JSON body" },
-      { status: 400 }
+      { status: 400, headers: corsHeaders }
     );
   }
 
@@ -56,14 +85,14 @@ export async function POST(request: NextRequest) {
   if (!originalUrl) {
     return NextResponse.json(
       { error: "Missing required field: url" },
-      { status: 400 }
+      { status: 400, headers: corsHeaders }
     );
   }
 
   if (!isValidUrl(originalUrl)) {
     return NextResponse.json(
       { error: "Invalid URL. Must be a valid HTTP or HTTPS URL." },
-      { status: 400 }
+      { status: 400, headers: corsHeaders }
     );
   }
 
@@ -74,7 +103,7 @@ export async function POST(request: NextRequest) {
     if (host === ROOT_DOMAIN || host === `www.${ROOT_DOMAIN}`) {
       return NextResponse.json(
         { error: "Cannot shorten a Kliqs URL." },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
   } catch {
@@ -95,7 +124,6 @@ export async function POST(request: NextRequest) {
 
   // ─────────────────────────────────────────────────────────────────────────
   // 3. Generate Slug with Collision Handling
-  //    Retry loop: on unique constraint violation (Prisma P2002), regenerate.
   //    Guest links expire in 24 hours; authenticated links are permanent.
   // ─────────────────────────────────────────────────────────────────────────
   let link = null;
@@ -117,8 +145,6 @@ export async function POST(request: NextRequest) {
           originalUrl,
           anonymousSessionId,
           expiresAt,
-          // userId will be null for anonymous users;
-          // it gets populated after auth + link sync
         },
       });
       break; // Success — exit retry loop
@@ -139,22 +165,21 @@ export async function POST(request: NextRequest) {
       console.error("[shorten] Database error:", error);
       return NextResponse.json(
         { error: "Internal server error" },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
   }
 
   if (!link) {
-    // Exhausted all retries (extremely unlikely: 5 consecutive collisions)
     console.error("[shorten] Exhausted slug generation retries");
     return NextResponse.json(
       { error: "Unable to generate a unique short link. Please try again." },
-      { status: 503 }
+      { status: 503, headers: corsHeaders }
     );
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 4. Build Response
+  // 4. Build Response with CORS headers
   // ─────────────────────────────────────────────────────────────────────────
   const shortUrl = `https://${ROOT_DOMAIN}/${link.slug}`;
 
@@ -167,7 +192,7 @@ export async function POST(request: NextRequest) {
       clicks: link.clicks,
       createdAt: link.createdAt,
     },
-    { status: 201 }
+    { status: 201, headers: corsHeaders }
   );
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -177,9 +202,10 @@ export async function POST(request: NextRequest) {
     response.cookies.set(ANON_COOKIE_NAME, anonymousSessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none", // Required for cross-subdomain cookies
       maxAge: ANON_COOKIE_MAX_AGE,
       path: "/",
+      domain: ".kliqs.me", // Share cookie across subdomains
     });
   }
 

@@ -74,6 +74,7 @@ export default function HomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: trimmedUrl }),
+        credentials: "include",
       });
 
       const data = await response.json();
