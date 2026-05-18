@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, FormEvent } from "react";
+import { useState, useRef, useCallback, useEffect, FormEvent } from "react";
 import {
   Link2,
   Clipboard,
@@ -12,8 +12,10 @@ import {
   User,
   X,
   Download,
+  AlertTriangle,
 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
 import { Footer } from "@/components/footer";
@@ -83,6 +85,14 @@ export default function HomePage() {
 
       setResult(data);
       setUrl("");
+
+      // Store link ID in localStorage for guest claiming later
+      if (!session?.user) {
+        const stored = localStorage.getItem("kliqs_anonymous_links");
+        const ids: string[] = stored ? JSON.parse(stored) : [];
+        ids.push(data.id);
+        localStorage.setItem("kliqs_anonymous_links", JSON.stringify(ids));
+      }
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
@@ -147,12 +157,7 @@ export default function HomePage() {
       <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
         <nav className="bg-white/80 backdrop-blur-md border border-gray-200/50 rounded-xl px-6 py-3.5 shadow-[0_2px_16px_rgba(0,0,0,0.04)] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#635bff] flex items-center justify-center">
-              <Link2 className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-extrabold text-gray-900 tracking-tight">
-              Kliqs.me
-            </span>
+            <Image src="/logo.svg" alt="Kliqs.me" width={120} height={32} className="h-8 w-auto" />
           </Link>
 
           <div className="hidden md:flex items-center gap-7">
@@ -395,6 +400,20 @@ export default function HomePage() {
             {error && (
               <div className="mt-4 text-sm text-red-500 font-medium animate-fade-in-up">
                 {error}
+              </div>
+            )}
+
+            {/* Guest Expiration Warning */}
+            {!session?.user && (result || activeQrValue) && (
+              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-4 py-2.5 max-w-2xl mx-auto animate-fade-in-up">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                <span>
+                  Link / QR Code ini bersifat sementara dan akan dihapus dalam 24 jam.{" "}
+                  <a href="https://dash.kliqs.me/login" className="font-semibold underline underline-offset-2 hover:text-amber-700">
+                    Daftar atau Login sekarang
+                  </a>{" "}
+                  agar permanen!
+                </span>
               </div>
             )}
 

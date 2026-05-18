@@ -96,9 +96,16 @@ export async function POST(request: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────────
   // 3. Generate Slug with Collision Handling
   //    Retry loop: on unique constraint violation (Prisma P2002), regenerate.
+  //    Guest links expire in 24 hours; authenticated links are permanent.
   // ─────────────────────────────────────────────────────────────────────────
   let link = null;
   let attempts = 0;
+
+  // Guest links expire in 24 hours
+  const isGuest = true; // No auth check on this public endpoint
+  const expiresAt = isGuest
+    ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+    : null;
 
   while (attempts < MAX_RETRIES) {
     const slug = generateSlug();
@@ -109,6 +116,7 @@ export async function POST(request: NextRequest) {
           slug,
           originalUrl,
           anonymousSessionId,
+          expiresAt,
           // userId will be null for anonymous users;
           // it gets populated after auth + link sync
         },

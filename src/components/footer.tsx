@@ -1,4 +1,5 @@
 import { Link2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -13,10 +14,7 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#635bff] flex items-center justify-center">
-              <Link2 className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="text-base font-bold text-gray-900">Kliqs.me</span>
+            <Image src="/logo.svg" alt="Kliqs.me" width={100} height={28} className="h-7 w-auto" />
           </Link>
 
           {/* Links */}
