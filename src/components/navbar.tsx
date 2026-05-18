@@ -1,8 +1,10 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { Link2, LogOut, LayoutDashboard } from "lucide-react";
+import { LogOut, LayoutDashboard } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { ClaimOnLogin } from "@/components/claim-on-login";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Navbar Component
@@ -14,15 +16,11 @@ export function Navbar() {
 
   return (
     <nav className="w-full border-b border-border/50 bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+      <ClaimOnLogin />
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Brand */}
         <Link href="https://home.kliqs.me" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-            <Link2 className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-lg font-bold text-foreground tracking-tight group-hover:text-accent transition-colors">
-            Kliqs.me
-          </span>
+          <Image src="/logo.svg" alt="Kliqs.me" width={120} height={32} className="h-8 w-auto" />
         </Link>
 
         {/* Right side */}
