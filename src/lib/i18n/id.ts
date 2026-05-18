@@ -109,6 +109,14 @@ export const id: Translations = {
     id: "Bahasa Indonesia",
     en: "English",
   },
+  auth: {
+    title: "Selamat datang kembali",
+    subtitle: "Masuk untuk mengelola tautan pendek Anda",
+    googleBtn: "Lanjutkan dengan Google",
+    githubBtn: "Lanjutkan dengan GitHub",
+    termsDisclaimer: "Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi kami.",
+    backToHome: "Kembali ke beranda",
+  },
   terms: {
     title: "Ketentuan Layanan",
     lastUpdated: "Terakhir diperbarui: 1 Januari 2025",
