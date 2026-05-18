@@ -3,21 +3,21 @@ import type { Translations } from "./en";
 export const id: Translations = {
   locale: "id",
   nav: {
-    shortener: "Pemendek",
-    analytics: "Analitik",
-    qrCodes: "Kode QR",
+    shortener: "Shortener",
+    analytics: "Analytics",
+    qrCodes: "QR Codes",
     microsite: "Microsite",
-    pricing: "Harga",
+    pricing: "Pricing",
     loginRegister: "Masuk / Daftar",
     dashboard: "Dashboard",
   },
   hero: {
-    headline: "Link Pendek, Dampak Besar.",
+    headline: "Satu Link Singkat, Engagement Auto Meningkat!",
     subtitle: "Pendekkan, bagikan, dan lacak tautan kamu dengan pemendek URL paling simpel di internet.",
     trust: "Dipercaya oleh 10.000+ kreator & developer di seluruh dunia",
   },
   tabs: {
-    shortener: "Pemendek",
+    shortener: "Shortener",
     qr: "Kode QR",
     bio: "Bio Page",
   },
