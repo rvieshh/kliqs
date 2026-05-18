@@ -182,38 +182,38 @@ export default function HomePage() {
             {/* ─────────────────────────────────────────────────────────────────
                 FEATURE TABS
             ───────────────────────────────────────────────────────────────── */}
-            <div className="flex items-center justify-center gap-1 bg-gray-100 rounded-xl p-1 mb-8 w-fit mx-auto">
+            <div className="grid grid-cols-3 gap-1 md:flex md:items-center md:justify-center md:gap-1 bg-gray-100 rounded-xl p-1 mb-8 w-full md:w-fit mx-auto">
               <button
                 onClick={() => handleTabChange("shortener")}
-                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                className={`flex items-center justify-center gap-1.5 px-2 py-2 text-xs md:px-5 md:py-2.5 md:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
                   activeTab === "shortener"
                     ? "bg-white text-[#635bff] shadow-sm"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                <Link2 className="w-4 h-4" />
+                <Link2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 {dict.tabs.shortener}
               </button>
               <button
                 onClick={() => handleTabChange("qr")}
-                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                className={`flex items-center justify-center gap-1.5 px-2 py-2 text-xs md:px-5 md:py-2.5 md:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
                   activeTab === "qr"
                     ? "bg-white text-[#635bff] shadow-sm"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                <QrCode className="w-4 h-4" />
+                <QrCode className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 {dict.tabs.qr}
               </button>
               <button
                 onClick={() => handleTabChange("bio")}
-                className={`flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                className={`flex items-center justify-center gap-1.5 px-2 py-2 text-xs md:px-5 md:py-2.5 md:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
                   activeTab === "bio"
                     ? "bg-white text-[#635bff] shadow-sm"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                <User className="w-4 h-4" />
+                <User className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 {dict.tabs.bio}
               </button>
             </div>

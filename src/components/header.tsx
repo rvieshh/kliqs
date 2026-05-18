@@ -177,7 +177,7 @@ export function Header() {
           />
 
           {/* Menu Panel */}
-          <div className="absolute top-[88px] left-4 right-4 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-fade-in-up">
+          <div className="absolute top-[96px] left-4 right-4 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in-up">
             <div className="flex flex-col p-4">
               {/* Navigation Links */}
               <div className="flex flex-col">
