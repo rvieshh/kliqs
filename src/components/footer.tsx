@@ -25,12 +25,10 @@ export function Footer() {
               Privacy Policy
             </Link>
             <a
-              href="https://github.com/rvieshh/kliqs"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:support@kliqs.me"
               className="hover:text-gray-600 transition-colors"
             >
-              GitHub
+              Contact
             </a>
           </nav>
         </div>
@@ -38,7 +36,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-8 pt-6 border-t border-gray-200/40 text-center">
           <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} OkaSpace. All rights reserved.
+            &copy; {new Date().getFullYear()} Kliqs. All rights reserved.
           </p>
         </div>
       </div>
