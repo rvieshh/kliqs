@@ -6,11 +6,22 @@ import { prisma } from "@/lib/prisma";
 // /api/qr-codes — Authenticated QR Code Management
 // ─────────────────────────────────────────────────────────────────────────────
 // GET    → Returns all QR codes belonging to the authenticated user.
-// POST   → Creates a new QR code record for the authenticated user.
+// POST   → Creates a new QR code with optional logo URL.
 // DELETE → Deletes a QR code by ID (must be owned by user).
 // ─────────────────────────────────────────────────────────────────────────────
 
 const QR_MONTHLY_LIMIT = 25;
+
+/**
+ * Smart URL formatting: auto-prepend https:// if no protocol is present.
+ */
+function formatUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return trimmed;
+}
 
 function isValidUrl(url: string): boolean {
   try {
@@ -58,12 +69,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Parse body
   let body: {
     title?: string;
     destinationUrl?: string;
     foregroundColor?: string;
     backgroundColor?: string;
+    logoUrl?: string;
   };
 
   try {
@@ -73,9 +84,10 @@ export async function POST(request: NextRequest) {
   }
 
   const title = body.title?.trim();
-  const destinationUrl = body.destinationUrl?.trim();
+  let destinationUrl = body.destinationUrl?.trim() || "";
   const foregroundColor = body.foregroundColor?.trim() || "#000000";
   const backgroundColor = body.backgroundColor?.trim() || "#FFFFFF";
+  const logoUrl = body.logoUrl?.trim() || null;
 
   // Validate required fields
   if (!title) {
@@ -85,6 +97,9 @@ export async function POST(request: NextRequest) {
   if (!destinationUrl) {
     return NextResponse.json({ error: "Missing required field: destinationUrl" }, { status: 400 });
   }
+
+  // Smart URL formatting
+  destinationUrl = formatUrl(destinationUrl);
 
   if (!isValidUrl(destinationUrl)) {
     return NextResponse.json(
@@ -135,6 +150,7 @@ export async function POST(request: NextRequest) {
         destinationUrl,
         foregroundColor,
         backgroundColor,
+        logoUrl,
         userId: session.user.id,
       },
     });
@@ -146,6 +162,7 @@ export async function POST(request: NextRequest) {
         destinationUrl: qrCode.destinationUrl,
         foregroundColor: qrCode.foregroundColor,
         backgroundColor: qrCode.backgroundColor,
+        logoUrl: qrCode.logoUrl,
         scans: qrCode.scans,
         createdAt: qrCode.createdAt,
       },
@@ -174,7 +191,6 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "Missing QR code ID" }, { status: 400 });
   }
 
-  // Verify ownership
   const qrCode = await prisma.qrCode.findFirst({
     where: { id: qrId, userId: session.user.id },
   });
