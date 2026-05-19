@@ -7,7 +7,52 @@ import { Eye, EyeOff } from "lucide-react";
 import { AuthLanguageToggle } from "../login/login-client";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Register Client Component — HPanel Hostinger Style
+// Password Strength Indicator
+// ─────────────────────────────────────────────────────────────────────────────
+
+function getPasswordStrength(password: string): { level: number; label: string; color: string } {
+  if (!password) return { level: 0, label: "", color: "bg-gray-200" };
+
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 2) return { level: 1, label: "Weak", color: "bg-red-500" };
+  if (score <= 4) return { level: 2, label: "Medium", color: "bg-yellow-500" };
+  return { level: 3, label: "Strong", color: "bg-green-500" };
+}
+
+function PasswordStrengthBar({ password }: { password: string }) {
+  const { level, label, color } = getPasswordStrength(password);
+  if (!password) return null;
+
+  return (
+    <div className="mt-2">
+      <div className="flex gap-1">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+              i <= level ? color : "bg-gray-200"
+            }`}
+          />
+        ))}
+      </div>
+      <p className={`mt-1 text-xs font-medium ${
+        level === 1 ? "text-red-500" : level === 2 ? "text-yellow-600" : "text-green-600"
+      }`}>
+        {label}
+      </p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Register Client Component
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface AuthStrings {
@@ -22,36 +67,63 @@ interface AuthStrings {
   registerBtn: string;
   hasAccount: string;
   logIn: string;
+  [key: string]: string;
 }
 
 export function RegisterClient({ auth, locale }: { auth: AuthStrings; locale: "en" | "id" }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<{ email?: string; password?: string; confirm?: string }>({});
+
+  const confirmLabel = locale === "id" ? "Konfirmasi kata sandi" : "Confirm password";
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const newErrors: { email?: string; password?: string; confirm?: string } = {};
+
+    if (!email.trim()) {
+      newErrors.email = locale === "id" ? "Email wajib diisi" : "Email is required";
+    }
+    if (!password.trim()) {
+      newErrors.password = locale === "id" ? "Kata sandi wajib diisi" : "Password is required";
+    } else if (password.length < 8) {
+      newErrors.password = locale === "id" ? "Minimal 8 karakter" : "Minimum 8 characters";
+    }
+    if (!confirmPassword.trim()) {
+      newErrors.confirm = locale === "id" ? "Konfirmasi kata sandi wajib diisi" : "Please confirm your password";
+    } else if (password !== confirmPassword) {
+      newErrors.confirm = locale === "id" ? "Kata sandi tidak cocok" : "Passwords do not match";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    signIn("credentials", { email, password, callbackUrl: "/dashboard" });
+  }
 
   return (
     <>
-      {/* Floating Language Toggle */}
       <AuthLanguageToggle locale={locale} />
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#f4f5f9] px-4 py-12">
-        {/* Logo */}
         <div className="mb-8">
           <Image src="/logo.svg" alt="Kliqs.me" width={140} height={40} className="h-10 w-auto" />
         </div>
 
-        {/* Card */}
         <div className="w-full max-w-[450px] bg-white rounded-2xl shadow-xl p-8 sm:p-10">
-          {/* Title */}
-          <h1 className="text-[1.75rem] font-bold text-gray-900 text-center mb-1">
-            {auth.registerTitle}
-          </h1>
-          <p className="text-sm text-gray-500 text-center mb-6">
-            {auth.registerSubtitle}
-          </p>
+          <h1 className="text-[1.75rem] font-bold text-gray-900 text-center mb-1">{auth.registerTitle}</h1>
+          <p className="text-sm text-gray-500 text-center mb-6">{auth.registerSubtitle}</p>
 
-          {/* Social Login Buttons — 2-column grid */}
+          {/* OAuth Buttons — OUTSIDE the form */}
           <div className="grid grid-cols-2 gap-4 mb-6">
-            {/* Google */}
             <button
+              type="button"
               onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
               className="flex items-center justify-center gap-3 h-14 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all cursor-pointer shadow-sm font-medium text-sm text-gray-700"
             >
@@ -63,9 +135,8 @@ export function RegisterClient({ auth, locale }: { auth: AuthStrings; locale: "e
               </svg>
               Google
             </button>
-
-            {/* GitHub */}
             <button
+              type="button"
               onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
               className="flex items-center justify-center gap-3 h-14 bg-[#24292f] border border-[#24292f] rounded-xl hover:bg-[#32383f] transition-all cursor-pointer shadow-sm font-medium text-sm text-white"
             >
@@ -84,60 +155,67 @@ export function RegisterClient({ auth, locale }: { auth: AuthStrings; locale: "e
           </div>
 
           {/* Form */}
-          <form onSubmit={(e) => { e.preventDefault(); signIn("google", { callbackUrl: "/dashboard" }); }} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                {auth.emailPlaceholder}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{auth.emailPlaceholder}</label>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors((p) => ({ ...p, email: undefined })); }}
                 placeholder={auth.emailPlaceholder}
-                className="w-full px-4 py-3.5 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all"
+                className={`w-full px-4 py-3.5 border rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all ${errors.email ? "border-red-400" : "border-gray-200"}`}
               />
+              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                {auth.passwordPlaceholder}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{auth.passwordPlaceholder}</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); if (errors.password) setErrors((p) => ({ ...p, password: undefined })); }}
                   placeholder={auth.passwordPlaceholder}
-                  className="w-full px-4 py-3.5 pr-12 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all"
+                  className={`w-full px-4 py-3.5 pr-12 border rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all ${errors.password ? "border-red-400" : "border-gray-200"}`}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                >
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+              <PasswordStrengthBar password={password} />
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-[#673de6] text-white text-base font-semibold rounded-lg hover:bg-[#522eb1] active:bg-[#4527a0] transition-colors cursor-pointer shadow-[0_2px_8px_rgba(103,61,230,0.25)]"
-            >
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{confirmLabel}</label>
+              <div className="relative">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => { setConfirmPassword(e.target.value); if (errors.confirm) setErrors((p) => ({ ...p, confirm: undefined })); }}
+                  placeholder={confirmLabel}
+                  className={`w-full px-4 py-3.5 pr-12 border rounded-lg text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#673de6] focus:ring-2 focus:ring-[#673de6]/10 transition-all ${errors.confirm ? "border-red-400" : "border-gray-200"}`}
+                />
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+                  {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {errors.confirm && <p className="mt-1 text-xs text-red-500">{errors.confirm}</p>}
+            </div>
+
+            {/* Submit */}
+            <button type="submit" className="w-full py-3.5 bg-[#673de6] text-white text-base font-semibold rounded-lg hover:bg-[#522eb1] active:bg-[#4527a0] transition-colors cursor-pointer shadow-[0_2px_8px_rgba(103,61,230,0.25)]">
               {auth.registerBtn}
             </button>
           </form>
 
-          {/* Terms */}
-          <p className="mt-5 text-xs text-center text-gray-400">
-            {auth.termsDisclaimer}
-          </p>
-
-          {/* Login Link */}
+          <p className="mt-5 text-xs text-center text-gray-400">{auth.termsDisclaimer}</p>
           <p className="mt-4 text-sm text-center text-gray-500">
             {auth.hasAccount}{" "}
-            <a href="/login" className="font-semibold text-[#673de6] hover:text-[#522eb1] transition-colors">
-              {auth.logIn}
-            </a>
+            <a href="/login" className="font-semibold text-[#673de6] hover:text-[#522eb1] transition-colors">{auth.logIn}</a>
           </p>
         </div>
       </div>
