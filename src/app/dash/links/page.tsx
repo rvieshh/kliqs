@@ -285,8 +285,8 @@ export default function LinksPage() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-semibold text-[#4361ee]">kliqs.me/{link.slug}</span>
-                            {link.hasPassword && <Lock className="w-3 h-3 text-amber-500" title="Password protected" />}
-                            {link.expiresAt && <Clock className="w-3 h-3 text-gray-400" title={`Expires ${new Date(link.expiresAt).toLocaleDateString()}`} />}
+                            {link.hasPassword && <span title="Password protected"><Lock className="w-3 h-3 text-amber-500" /></span>}
+                            {link.expiresAt && <span title={`Expires ${new Date(link.expiresAt).toLocaleDateString()}`}><Clock className="w-3 h-3 text-gray-400" /></span>}
                           </div>
                         </td>
                         <td className="px-6 py-4">
