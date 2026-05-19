@@ -109,6 +109,11 @@ export function middleware(request: NextRequest) {
   // DASH DOMAIN: dash.kliqs.me → Dashboard, Auth, API
   // ─────────────────────────────────────────────────────────────────────────
   if (currentHost === DASH_DOMAIN) {
+    // Root path → Redirect to /login to prevent 404 after logout
+    if (pathname === "/") {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+
     // Rewrite all requests to /dash/* internal path
     const url = new URL(`/dash${pathname}`, request.url);
     return NextResponse.rewrite(url);
