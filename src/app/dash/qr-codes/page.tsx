@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { redirect } from "next/navigation";
 import {
   Link2,
@@ -21,8 +21,9 @@ import {
   AlertCircle,
   ScanLine,
   Maximize2,
-  ImageIcon,
+  Upload,
   AlertTriangle,
+  Type,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -87,9 +88,15 @@ export default function QRCodesPage() {
   // Form state
   const [title, setTitle] = useState("");
   const [destinationUrl, setDestinationUrl] = useState("");
+  const [debouncedValue, setDebouncedValue] = useState("");
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [fgColor, setFgColor] = useState("#000000");
   const [bgColor, setBgColor] = useState("#FFFFFF");
-  const [logoUrl, setLogoUrl] = useState("");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState("");
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const TEXT_LIMIT = 1500;
 
   useEffect(() => {
     if (status === "unauthenticated") redirect("/login");
@@ -105,6 +112,36 @@ export default function QRCodesPage() {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+
+  // 500ms debounce for live preview
+  useEffect(() => {
+    setIsPreviewLoading(true);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedValue(destinationUrl);
+      setIsPreviewLoading(false);
+    }, 500);
+    return () => { if (debounceTimer.current) clearTimeout(debounceTimer.current); };
+  }, [destinationUrl]);
+
+  // Handle logo file selection
+  function handleLogoSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  }
+
+  function clearLogo() {
+    setLogoFile(null);
+    setLogoPreview("");
+  }
+
+  // Detect if input looks like a URL vs plain text
+  function isLikelyUrl(text: string): boolean {
+    return /^(https?:\/\/|www\.|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})/.test(text.trim());
+  }
 
   const contrastRatio = getContrastRatio(fgColor, bgColor);
   const contrastOk = contrastRatio >= 4.5;
@@ -129,19 +166,26 @@ export default function QRCodesPage() {
       setToast({ type: "error", message: "Colors have insufficient contrast. Adjust to meet 4.5:1 ratio." });
       return;
     }
+    if (destinationUrl.length > TEXT_LIMIT) {
+      setToast({ type: "error", message: `Content exceeds ${TEXT_LIMIT} character limit.` });
+      return;
+    }
     setIsSubmitting(true);
 
     try {
+      // Use FormData for file upload support
+      const formData = new FormData();
+      formData.append("title", title.trim());
+      formData.append("destinationUrl", destinationUrl.trim());
+      formData.append("foregroundColor", fgColor);
+      formData.append("backgroundColor", bgColor);
+      if (logoFile) {
+        formData.append("logo", logoFile);
+      }
+
       const res = await fetch("/api/qr-codes", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: title.trim(),
-          destinationUrl: destinationUrl.trim(),
-          foregroundColor: fgColor,
-          backgroundColor: bgColor,
-          logoUrl: logoUrl.trim() || undefined,
-        }),
+        body: formData,
       });
 
       const data = await res.json();
@@ -157,7 +201,7 @@ export default function QRCodesPage() {
       setDestinationUrl("");
       setFgColor("#000000");
       setBgColor("#FFFFFF");
-      setLogoUrl("");
+      clearLogo();
       fetchQrCodes();
     } catch {
       setToast({ type: "error", message: "Network error. Please try again." });
@@ -329,9 +373,14 @@ export default function QRCodesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Destination URL</label>
-                  <input type="text" value={destinationUrl} onChange={(e) => setDestinationUrl(e.target.value)} placeholder="example.com" required className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all placeholder:text-gray-300" />
-                  <p className="text-xs text-gray-400 mt-1">https:// added automatically if missing</p>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Destination URL or Text</label>
+                  <textarea value={destinationUrl} onChange={(e) => setDestinationUrl(e.target.value)} placeholder="example.com or any text content" required maxLength={TEXT_LIMIT} rows={2} className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20 focus:border-[#7c3aed] transition-all placeholder:text-gray-300 resize-none" />
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-xs text-gray-400">
+                      {isLikelyUrl(destinationUrl) ? "URL detected — https:// added if missing" : "Plain text mode"}
+                    </p>
+                    <span className={`text-xs ${destinationUrl.length > TEXT_LIMIT * 0.9 ? "text-amber-500" : "text-gray-400"}`}>{destinationUrl.length}/{TEXT_LIMIT}</span>
+                  </div>
                 </div>
 
                 {/* Colors */}
@@ -360,16 +409,25 @@ export default function QRCodesPage() {
                   </div>
                 )}
 
-                {/* Logo URL */}
+                {/* Logo Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Logo URL <span className="text-gray-400 font-normal">(optional)</span>
+                    Logo <span className="text-gray-400 font-normal">(optional)</span>
                   </label>
-                  <div className="flex items-center gap-2 rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-[#7c3aed]/20 focus-within:border-[#7c3aed] transition-all overflow-hidden">
-                    <span className="pl-3"><ImageIcon className="w-4 h-4 text-gray-400" /></span>
-                    <input type="url" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="https://yoursite.com/logo.png" className="flex-1 px-3 py-3 text-sm focus:outline-none placeholder:text-gray-300" />
-                  </div>
-                  <p className="text-xs text-gray-400 mt-1">Centered logo with high error correction (Level H)</p>
+                  {logoPreview ? (
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-gray-50">
+                      <img src={logoPreview} alt="Logo" className="w-8 h-8 rounded object-cover" />
+                      <span className="text-sm text-gray-700 truncate flex-1">{logoFile?.name}</span>
+                      <button type="button" onClick={clearLogo} className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-600 cursor-pointer"><X className="w-4 h-4" /></button>
+                    </div>
+                  ) : (
+                    <label className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-gray-300 hover:border-[#7c3aed] hover:bg-[#7c3aed]/5 transition-all cursor-pointer">
+                      <Upload className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm text-gray-500">Upload logo image</span>
+                      <input type="file" accept="image/*" onChange={handleLogoSelect} className="hidden" />
+                    </label>
+                  )}
+                  <p className="text-xs text-gray-400 mt-1">Centered in QR with Level H error correction</p>
                 </div>
 
                 <button type="submit" disabled={isSubmitting || !contrastOk} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#4361ee] text-white text-sm font-semibold rounded-xl hover:bg-[#3a56d4] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer">
@@ -380,22 +438,35 @@ export default function QRCodesPage() {
 
               {/* Right: Live Preview */}
               <div className="flex-1 p-6 flex flex-col items-center justify-center bg-gray-50/50 min-h-[400px]">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Live Preview</p>
-                <div className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2 mb-4">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Live Preview</p>
+                  {isPreviewLoading && <Loader2 className="w-3 h-3 text-[#7c3aed] animate-spin" />}
+                </div>
+                <div className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100 relative">
+                  {isPreviewLoading && (
+                    <div className="absolute inset-0 bg-white/60 rounded-2xl flex items-center justify-center z-10">
+                      <Loader2 className="w-5 h-5 text-[#7c3aed] animate-spin" />
+                    </div>
+                  )}
                   <QRCodeSVG
-                    value={destinationUrl || "https://kliqs.me"}
+                    value={debouncedValue || "https://kliqs.me"}
                     size={180}
                     fgColor={fgColor}
                     bgColor={bgColor}
                     level="H"
-                    imageSettings={logoUrl ? { src: logoUrl, height: 40, width: 40, excavate: true } : undefined}
+                    imageSettings={logoPreview ? { src: logoPreview, height: 40, width: 40, excavate: true } : undefined}
                   />
                 </div>
                 <div className="mt-4 text-center">
                   <p className="text-xs text-gray-500">
                     Contrast: <span className={contrastOk ? "text-emerald-600 font-semibold" : "text-red-500 font-semibold"}>{contrastRatio.toFixed(1)}:1</span>
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">Error correction: Level H (30%)</p>
+                  <div className="flex items-center justify-center gap-2 mt-1">
+                    <p className="text-xs text-gray-400">Error correction: Level H (30%)</p>
+                    {!isLikelyUrl(debouncedValue) && debouncedValue && (
+                      <span className="inline-flex items-center gap-1 text-xs text-purple-500"><Type className="w-3 h-3" />Text</span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
