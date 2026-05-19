@@ -113,6 +113,7 @@ model QrCode {
   destinationUrl  String   // URL the QR code points to
   foregroundColor String   @default("#000000")
   backgroundColor String   @default("#FFFFFF")
+  logoUrl         String?  // Optional branded logo URL (centered in QR)
   scans           Int      @default(0)
   userId          String
   createdAt       DateTime @default(now())
