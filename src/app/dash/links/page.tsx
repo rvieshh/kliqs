@@ -12,7 +12,6 @@ import {
   LayoutDashboard,
   Bell,
   Loader2,
-  Sparkles,
   LogOut,
   Plus,
   ExternalLink,
@@ -20,14 +19,16 @@ import {
   Trash2,
   MousePointerClick,
   Calendar,
+  X,
+  Check,
+  AlertCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Links Page — Kliqs.me Dashboard
-// Displays all shortened links for the authenticated user with a clean,
-// data-driven table and primary CTA for creating new links.
+// Fully functional: create, list, copy, delete shortened links.
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface LinkItem {
@@ -38,10 +39,22 @@ interface LinkItem {
   createdAt: string;
 }
 
+interface Toast {
+  type: "success" | "error";
+  message: string;
+}
+
 export default function LinksPage() {
   const { data: session, status } = useSession();
   const [links, setLinks] = useState<LinkItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState<Toast | null>(null);
+
+  // Form state
+  const [url, setUrl] = useState("");
+  const [customAlias, setCustomAlias] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -54,6 +67,14 @@ export default function LinksPage() {
       fetchLinks();
     }
   }, [status]);
+
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   async function fetchLinks() {
     try {
@@ -69,8 +90,57 @@ export default function LinksPage() {
     }
   }
 
+  async function handleCreateLink(e: React.FormEvent) {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/links", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: url.trim(),
+          customAlias: customAlias.trim() || undefined,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setToast({ type: "error", message: data.error || "Failed to create link" });
+        return;
+      }
+
+      setToast({ type: "success", message: `Link created: kliqs.me/${data.slug}` });
+      setShowModal(false);
+      setUrl("");
+      setCustomAlias("");
+      fetchLinks(); // Refresh list
+    } catch {
+      setToast({ type: "error", message: "Network error. Please try again." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      const res = await fetch(`/api/links?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setLinks((prev) => prev.filter((l) => l.id !== id));
+        setToast({ type: "success", message: "Link deleted successfully" });
+      } else {
+        const data = await res.json();
+        setToast({ type: "error", message: data.error || "Failed to delete" });
+      }
+    } catch {
+      setToast({ type: "error", message: "Network error" });
+    }
+  }
+
   function copyToClipboard(slug: string) {
     navigator.clipboard.writeText(`https://kliqs.me/${slug}`);
+    setToast({ type: "success", message: "Copied to clipboard!" });
   }
 
   if (status === "loading") {
@@ -91,6 +161,21 @@ export default function LinksPage() {
 
   return (
     <div className="min-h-screen flex bg-[#f7f9fc]">
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border ${
+          toast.type === "success"
+            ? "bg-white border-emerald-200 text-emerald-700"
+            : "bg-white border-red-200 text-red-700"
+        } animate-in slide-in-from-top-2`}>
+          {toast.type === "success" ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          <span className="text-sm font-medium">{toast.message}</span>
+          <button onClick={() => setToast(null)} className="ml-2 p-0.5 rounded hover:bg-gray-100 cursor-pointer">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-100 px-4 py-6 sticky top-0 h-screen">
         <div className="px-3 mb-8">
@@ -137,7 +222,10 @@ export default function LinksPage() {
               <button className="p-2.5 rounded-xl bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:border-gray-200 transition-all cursor-pointer">
                 <Bell className="w-4.5 h-4.5" />
               </button>
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-[#4361ee] text-white text-sm font-semibold rounded-xl hover:bg-[#3a56d4] hover:shadow-lg hover:shadow-[#4361ee]/20 transition-all cursor-pointer">
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#4361ee] text-white text-sm font-semibold rounded-xl hover:bg-[#3a56d4] hover:shadow-lg hover:shadow-[#4361ee]/20 transition-all cursor-pointer"
+              >
                 <Plus className="w-4 h-4" />
                 Create New Link
               </button>
@@ -152,7 +240,6 @@ export default function LinksPage() {
               <Loader2 className="w-6 h-6 text-[#4361ee] animate-spin" />
             </div>
           ) : links.length === 0 ? (
-            /* Empty State */
             <div className="flex flex-col items-center justify-center py-20">
               <div className="w-20 h-20 rounded-2xl bg-[#4361ee]/5 flex items-center justify-center mb-6">
                 <Link2 className="w-10 h-10 text-[#4361ee]" />
@@ -161,13 +248,15 @@ export default function LinksPage() {
               <p className="text-sm text-gray-400 mb-6 text-center max-w-sm">
                 Create your first shortened link to start tracking clicks and sharing URLs effortlessly.
               </p>
-              <button className="flex items-center gap-2 px-5 py-3 bg-[#4361ee] text-white text-sm font-semibold rounded-xl hover:bg-[#3a56d4] hover:shadow-lg hover:shadow-[#4361ee]/20 transition-all cursor-pointer">
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-5 py-3 bg-[#4361ee] text-white text-sm font-semibold rounded-xl hover:bg-[#3a56d4] hover:shadow-lg hover:shadow-[#4361ee]/20 transition-all cursor-pointer"
+              >
                 <Plus className="w-4 h-4" />
                 Create Your First Link
               </button>
             </div>
           ) : (
-            /* Links Table */
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -184,9 +273,7 @@ export default function LinksPage() {
                     {links.map((link) => (
                       <tr key={link.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-[#4361ee]">kliqs.me/{link.slug}</span>
-                          </div>
+                          <span className="text-sm font-semibold text-[#4361ee]">kliqs.me/{link.slug}</span>
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-sm text-gray-600 truncate max-w-[200px] block">{link.originalUrl}</span>
@@ -211,7 +298,7 @@ export default function LinksPage() {
                             <a href={`https://kliqs.me/${link.slug}`} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors" title="Open link">
                               <ExternalLink className="w-4 h-4" />
                             </a>
-                            <button className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer" title="Delete link">
+                            <button onClick={() => handleDelete(link.id)} className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer" title="Delete link">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -225,12 +312,77 @@ export default function LinksPage() {
           )}
         </main>
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          CREATE LINK MODAL
+      ═══════════════════════════════════════════════════════════════════════ */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-gray-900">Create New Link</h2>
+              <button onClick={() => setShowModal(false)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateLink} className="space-y-4">
+              {/* URL Input */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Destination URL</label>
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://example.com/your-long-url"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all placeholder:text-gray-300"
+                />
+              </div>
+
+              {/* Custom Alias */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Custom Alias <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <div className="flex items-center gap-0 rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-[#4361ee]/20 focus-within:border-[#4361ee] transition-all overflow-hidden">
+                  <span className="px-3 py-3 bg-gray-50 text-sm text-gray-400 border-r border-gray-200 whitespace-nowrap">kliqs.me/</span>
+                  <input
+                    type="text"
+                    value={customAlias}
+                    onChange={(e) => setCustomAlias(e.target.value)}
+                    placeholder="my-custom-link"
+                    className="flex-1 px-3 py-3 text-sm focus:outline-none placeholder:text-gray-300"
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-1">3-30 characters: letters, numbers, hyphens, underscores</p>
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#4361ee] text-white text-sm font-semibold rounded-xl hover:bg-[#3a56d4] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
+                {isSubmitting ? "Creating..." : "Create Short Link"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sidebar Item
 // ─────────────────────────────────────────────────────────────────────────────
 function SidebarItem({
   icon: Icon,
