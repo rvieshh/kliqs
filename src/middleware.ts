@@ -120,6 +120,24 @@ export function middleware(request: NextRequest) {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
+  // WILDCARD SUBDOMAIN: *.kliqs.me → Bio Pages
+  // Any subdomain not matching home/dash/www is treated as a bio page handle.
+  // Example: john.kliqs.me → rewrite to /bio/john
+  // ─────────────────────────────────────────────────────────────────────────
+  const RESERVED_SUBDOMAINS = ["home", "dash", "www", "api", "app", "mail"];
+  if (
+    currentHost.endsWith(`.${ROOT_DOMAIN}`) &&
+    currentHost !== HOME_DOMAIN &&
+    currentHost !== DASH_DOMAIN
+  ) {
+    const subdomain = currentHost.replace(`.${ROOT_DOMAIN}`, "");
+    if (subdomain && !RESERVED_SUBDOMAINS.includes(subdomain)) {
+      const url = new URL(`/bio/${subdomain}${pathname}`, request.url);
+      return NextResponse.rewrite(url);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   // LOCALHOST (Development) → Default to home behavior
   // ─────────────────────────────────────────────────────────────────────────
   if (currentHost === "localhost" || currentHost === "127.0.0.1") {

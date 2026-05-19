@@ -14,6 +14,8 @@ function isValidHandle(handle: string): boolean {
   return /^[a-z0-9_-]{3,30}$/.test(handle);
 }
 
+const RESERVED_SUBDOMAINS = ["home", "dash", "www", "api", "app", "mail", "admin", "support", "help", "blog", "docs", "status"];
+
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/bio-pages
 // ─────────────────────────────────────────────────────────────────────────────
@@ -77,6 +79,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "Invalid handle. Use 3-30 lowercase alphanumeric characters, hyphens, or underscores." },
       { status: 400 }
+    );
+  }
+
+  // Check reserved subdomains
+  if (RESERVED_SUBDOMAINS.includes(handle)) {
+    return NextResponse.json(
+      { error: "This subdomain is reserved. Please choose another." },
+      { status: 409 }
+    );
+  }
     );
   }
 
