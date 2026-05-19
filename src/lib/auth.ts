@@ -4,6 +4,7 @@ import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { getGravatarHash } from "@/lib/gravatar";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NextAuth v5 Configuration
@@ -74,11 +75,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     // ─────────────────────────────────────────────────────────────────────────
-    // session Callback — Attach user ID to the session object
+    // session Callback — Attach user ID and Gravatar hash to the session object
     // ─────────────────────────────────────────────────────────────────────────
     async session({ session, user }) {
       if (session.user && user) {
         session.user.id = user.id;
+        // Generate Gravatar hash from the user's email for retro avatar
+        if (user.email) {
+          (session.user as unknown as Record<string, unknown>).gravatarHash = getGravatarHash(user.email);
+        }
       }
       return session;
     },

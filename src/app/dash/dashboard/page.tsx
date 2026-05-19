@@ -10,7 +10,6 @@ import {
   User,
   Settings,
   LayoutDashboard,
-  HelpCircle,
   Bell,
   Loader2,
   Sparkles,
@@ -27,19 +26,27 @@ import { ClaimOnLogin } from "@/components/claim-on-login";
 // Executive Dashboard — Kliqs.me
 // Rich layout with sidebar navigation, metrics grid, quick actions,
 // plan summary, and usage quota tracker.
+// Fully functional: fetches real data from /api/dashboard-stats
 // ─────────────────────────────────────────────────────────────────────────────
 
-interface LinkItem {
-  id: string;
-  slug: string;
-  originalUrl: string;
-  clicks: number;
-  createdAt: string;
+interface DashboardStats {
+  totalClicks: number;
+  uniqueVisitors: number;
+  qrCodeScans: number;
+  bioPageViews: number;
+  linksToday: number;
+  totalActiveLinks: number;
+  plan: {
+    name: string;
+    linksPerDay: number;
+    qrCodesPerMonth: number;
+    totalLinksMax: number;
+  };
 }
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
-  const [links, setLinks] = useState<LinkItem[]>([]);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Redirect unauthenticated users
@@ -49,22 +56,22 @@ export default function DashboardPage() {
     }
   }, [status]);
 
-  // Fetch user's links
+  // Fetch dashboard stats
   useEffect(() => {
     if (status === "authenticated") {
-      fetchLinks();
+      fetchStats();
     }
   }, [status]);
 
-  async function fetchLinks() {
+  async function fetchStats() {
     try {
-      const res = await fetch("/api/links");
+      const res = await fetch("/api/dashboard-stats");
       if (res.ok) {
         const data = await res.json();
-        setLinks(data.links);
+        setStats(data);
       }
     } catch (error) {
-      console.error("Failed to fetch links:", error);
+      console.error("Failed to fetch dashboard stats:", error);
     } finally {
       setIsLoading(false);
     }
@@ -83,10 +90,27 @@ export default function DashboardPage() {
     return null;
   }
 
-  const totalClicks = links.reduce((sum, l) => sum + l.clicks, 0);
-  const linksToday = links.filter(
-    (l) => new Date(l.createdAt).toDateString() === new Date().toDateString()
-  ).length;
+  // Build Gravatar URL from session data
+  const gravatarHash = (session?.user as Record<string, unknown> | undefined)?.gravatarHash as string | undefined;
+  const gravatarUrl = gravatarHash
+    ? `https://www.gravatar.com/avatar/${gravatarHash}?d=retro&s=40`
+    : null;
+  const gravatarUrlLarge = gravatarHash
+    ? `https://www.gravatar.com/avatar/${gravatarHash}?d=retro&s=80`
+    : null;
+
+  const userName = session?.user?.name || "User";
+
+  // Calculate usage percentages
+  const linksToday = stats?.linksToday ?? 0;
+  const linksPerDayLimit = stats?.plan?.linksPerDay ?? 10;
+  const totalActiveLinks = stats?.totalActiveLinks ?? 0;
+  const totalLinksMax = stats?.plan?.totalLinksMax ?? 50;
+  const qrCodesPerMonth = stats?.plan?.qrCodesPerMonth ?? 25;
+
+  const linksTodayPercent = Math.min((linksToday / linksPerDayLimit) * 100, 100);
+  const totalLinksPercent = Math.min((totalActiveLinks / totalLinksMax) * 100, 100);
+  const qrPercent = Math.min((stats?.qrCodeScans ?? 0) / qrCodesPerMonth * 100, 100);
 
   return (
     <div className="min-h-screen flex bg-[#f7f9fc]">
@@ -111,27 +135,27 @@ export default function DashboardPage() {
           <SidebarItem icon={Settings} label="Settings" />
         </nav>
 
-        {/* User Profile */}
+        {/* User Profile with Gravatar Retro */}
         <div className="mt-auto pt-4 border-t border-gray-100">
           <div className="flex items-center gap-3 px-3 py-2">
-            {session?.user?.image ? (
+            {gravatarUrl ? (
               <img
-                src={session.user.image}
-                alt={session.user.name || "User"}
+                src={gravatarUrl}
+                alt={userName}
                 className="w-9 h-9 rounded-xl ring-2 ring-gray-100"
               />
             ) : (
               <div className="w-9 h-9 rounded-xl bg-[#635bff]/10 flex items-center justify-center">
                 <span className="text-sm font-bold text-[#635bff]">
-                  {session?.user?.name?.charAt(0)?.toUpperCase() || "U"}
+                  {userName.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-900 truncate">
-                {session?.user?.name || "User"}
+                {userName}
               </p>
-              <p className="text-xs text-gray-400">Free Plan</p>
+              <p className="text-xs text-gray-400">{stats?.plan?.name || "Free Plan"}</p>
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "https://home.kliqs.me" })}
@@ -156,13 +180,21 @@ export default function DashboardPage() {
                 Dashboard
               </h1>
               <p className="text-sm text-gray-400 mt-0.5">
-                Welcome back, {session?.user?.name?.split(" ")[0] || "there"}!
+                Welcome back, {userName.split(" ")[0]}!
               </p>
             </div>
             <div className="flex items-center gap-3">
               <button className="p-2.5 rounded-xl bg-white border border-gray-100 text-gray-400 hover:text-gray-600 hover:border-gray-200 transition-all cursor-pointer">
                 <Bell className="w-4.5 h-4.5" />
               </button>
+              {/* User menu with Gravatar */}
+              {gravatarUrlLarge ? (
+                <img
+                  src={gravatarUrlLarge}
+                  alt={userName}
+                  className="w-9 h-9 rounded-xl ring-2 ring-gray-100 hidden sm:block"
+                />
+              ) : null}
               <a
                 href="#"
                 className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#635bff] to-[#8b5cf6] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-[#635bff]/20 transition-all"
@@ -189,20 +221,20 @@ export default function DashboardPage() {
               borderHover="hover:border-[#635bff]/30"
             />
             <QuickActionCard
+              icon={QrCode}
+              label="Create new QR Codes"
+              href="#qr-codes"
+              bgColor="bg-purple-50"
+              iconColor="text-purple-500"
+              borderHover="hover:border-purple-200"
+            />
+            <QuickActionCard
               icon={User}
               label="Create new Bio Page"
-              href="https://home.kliqs.me"
+              href="#bio-page"
               bgColor="bg-blue-50"
               iconColor="text-blue-500"
               borderHover="hover:border-blue-200"
-            />
-            <QuickActionCard
-              icon={HelpCircle}
-              label="Help & Support"
-              href="#"
-              bgColor="bg-amber-50"
-              iconColor="text-amber-500"
-              borderHover="hover:border-amber-200"
             />
           </div>
 
@@ -213,28 +245,28 @@ export default function DashboardPage() {
             <MetricCard
               icon={MousePointerClick}
               label="Total Clicks"
-              value={isLoading ? "—" : totalClicks.toString()}
+              value={isLoading ? "—" : (stats?.totalClicks ?? 0).toString()}
               iconBg="bg-[#635bff]/10"
               iconColor="text-[#635bff]"
             />
             <MetricCard
               icon={Users}
               label="Unique Visitors"
-              value={isLoading ? "—" : Math.floor(totalClicks * 0.7).toString()}
+              value={isLoading ? "—" : (stats?.uniqueVisitors ?? 0).toString()}
               iconBg="bg-emerald-50"
               iconColor="text-emerald-500"
             />
             <MetricCard
               icon={QrCode}
               label="QR Code Scans"
-              value="0"
+              value={isLoading ? "—" : (stats?.qrCodeScans ?? 0).toString()}
               iconBg="bg-purple-50"
               iconColor="text-purple-500"
             />
             <MetricCard
               icon={Eye}
               label="Bio Page Views"
-              value="0"
+              value={isLoading ? "—" : (stats?.bioPageViews ?? 0).toString()}
               iconBg="bg-blue-50"
               iconColor="text-blue-500"
             />
@@ -256,7 +288,7 @@ export default function DashboardPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">
-                      Kliqs — Free Plan
+                      Kliqs — {stats?.plan?.name || "Free Plan"}
                     </h3>
                     <p className="text-xs text-gray-400">
                       Basic features for personal use
@@ -267,11 +299,11 @@ export default function DashboardPage() {
                 <ul className="space-y-2 text-sm text-gray-500 mb-5">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
-                    10 shortened links per day
+                    {linksPerDayLimit} shortened links per day
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
-                    25 QR codes per month
+                    {qrCodesPerMonth} QR codes per month
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
@@ -303,13 +335,19 @@ export default function DashboardPage() {
                       Links created today
                     </span>
                     <span className="text-sm font-bold text-gray-900">
-                      {linksToday} / 10
+                      {linksToday} / {linksPerDayLimit}
                     </span>
                   </div>
                   <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-[#635bff] to-[#8b5cf6] rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min((linksToday / 10) * 100, 100)}%` }}
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        linksTodayPercent >= 90
+                          ? "bg-gradient-to-r from-red-400 to-red-600"
+                          : linksTodayPercent >= 70
+                          ? "bg-gradient-to-r from-amber-400 to-amber-600"
+                          : "bg-gradient-to-r from-[#635bff] to-[#8b5cf6]"
+                      }`}
+                      style={{ width: `${linksTodayPercent}%` }}
                     />
                   </div>
                 </div>
@@ -321,13 +359,19 @@ export default function DashboardPage() {
                       QR Codes this month
                     </span>
                     <span className="text-sm font-bold text-gray-900">
-                      0 / 25
+                      {stats?.qrCodeScans ?? 0} / {qrCodesPerMonth}
                     </span>
                   </div>
                   <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all duration-500"
-                      style={{ width: "0%" }}
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        qrPercent >= 90
+                          ? "bg-gradient-to-r from-red-400 to-red-600"
+                          : qrPercent >= 70
+                          ? "bg-gradient-to-r from-amber-400 to-amber-600"
+                          : "bg-gradient-to-r from-purple-400 to-purple-600"
+                      }`}
+                      style={{ width: `${qrPercent}%` }}
                     />
                   </div>
                 </div>
@@ -339,13 +383,19 @@ export default function DashboardPage() {
                       Total active links
                     </span>
                     <span className="text-sm font-bold text-gray-900">
-                      {links.length} / 50
+                      {totalActiveLinks} / {totalLinksMax}
                     </span>
                   </div>
                   <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min((links.length / 50) * 100, 100)}%` }}
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        totalLinksPercent >= 90
+                          ? "bg-gradient-to-r from-red-400 to-red-600"
+                          : totalLinksPercent >= 70
+                          ? "bg-gradient-to-r from-amber-400 to-amber-600"
+                          : "bg-gradient-to-r from-emerald-400 to-emerald-600"
+                      }`}
+                      style={{ width: `${totalLinksPercent}%` }}
                     />
                   </div>
                 </div>
