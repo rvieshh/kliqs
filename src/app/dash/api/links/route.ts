@@ -6,13 +6,24 @@ import { generateSlug } from "@/lib/generate-slug";
 // ─────────────────────────────────────────────────────────────────────────────
 // /api/links — Authenticated Link Management
 // ─────────────────────────────────────────────────────────────────────────────
-// GET  → Returns all links belonging to the authenticated user.
-// POST → Creates a new permanent shortened link for the authenticated user.
-//         Accepts optional custom alias. Links created here never expire.
+// GET    → Returns all links belonging to the authenticated user.
+// POST   → Creates a new shortened link with optional alias, expiration, password.
+// DELETE → Deletes a link by ID (must be owned by user).
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MAX_RETRIES = 5;
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || "kliqs.me";
+
+/**
+ * Smart URL formatting: auto-prepend https:// if no protocol is present.
+ */
+function formatUrl(url: string): string {
+  const trimmed = url.trim();
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return trimmed;
+}
 
 function isValidUrl(url: string): boolean {
   try {
@@ -27,6 +38,26 @@ function isValidSlug(slug: string): boolean {
   return /^[A-Za-z0-9_-]{3,30}$/.test(slug);
 }
 
+/**
+ * Calculate expiration date from a selection string.
+ */
+function calculateExpiration(expiration: string): Date | null {
+  const now = Date.now();
+  switch (expiration) {
+    case "1d":
+      return new Date(now + 1 * 24 * 60 * 60 * 1000);
+    case "7d":
+      return new Date(now + 7 * 24 * 60 * 60 * 1000);
+    case "14d":
+      return new Date(now + 14 * 24 * 60 * 60 * 1000);
+    case "30d":
+      return new Date(now + 30 * 24 * 60 * 60 * 1000);
+    case "never":
+    default:
+      return null;
+  }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/links
 // ─────────────────────────────────────────────────────────────────────────────
@@ -34,10 +65,7 @@ export async function GET() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -48,18 +76,24 @@ export async function GET() {
         slug: true,
         originalUrl: true,
         clicks: true,
+        expiresAt: true,
+        password: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ links });
+    // Return password as boolean (don't expose actual value)
+    const sanitized = links.map((l) => ({
+      ...l,
+      hasPassword: !!l.password,
+      password: undefined,
+    }));
+
+    return NextResponse.json({ links: sanitized });
   } catch (error) {
     console.error("[links] Failed to fetch user links:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -70,33 +104,29 @@ export async function POST(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user?.id) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Parse body
-  let body: { url?: string; customAlias?: string };
+  let body: {
+    url?: string;
+    customAlias?: string;
+    expiration?: string;
+    password?: string;
+  };
+
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { error: "Invalid JSON body" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const originalUrl = body.url?.trim();
-  const customAlias = body.customAlias?.trim();
-
-  // Validate URL
+  // Smart URL formatting
+  let originalUrl = body.url?.trim() || "";
   if (!originalUrl) {
-    return NextResponse.json(
-      { error: "Missing required field: url" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Missing required field: url" }, { status: 400 });
   }
+
+  originalUrl = formatUrl(originalUrl);
 
   if (!isValidUrl(originalUrl)) {
     return NextResponse.json(
@@ -109,10 +139,7 @@ export async function POST(request: NextRequest) {
   try {
     const parsed = new URL(originalUrl);
     if (parsed.hostname === ROOT_DOMAIN || parsed.hostname === `www.${ROOT_DOMAIN}`) {
-      return NextResponse.json(
-        { error: "Cannot shorten a Kliqs URL." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Cannot shorten a Kliqs URL." }, { status: 400 });
     }
   } catch {
     // Already validated
@@ -135,6 +162,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Calculate expiration
+  const expiration = body.expiration || "7d"; // Default: 7 days
+  const expiresAt = calculateExpiration(expiration);
+
+  // Password (optional)
+  const password = body.password?.trim() || null;
+
+  const customAlias = body.customAlias?.trim();
+
   // Handle custom alias
   if (customAlias) {
     if (!isValidSlug(customAlias)) {
@@ -144,7 +180,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check uniqueness
     const existing = await prisma.link.findUnique({
       where: { slug: customAlias },
     });
@@ -156,14 +191,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create with custom alias
     try {
       const link = await prisma.link.create({
         data: {
           slug: customAlias,
           originalUrl,
           userId: session.user.id,
-          expiresAt: null, // Permanent for authenticated users
+          expiresAt,
+          password,
         },
       });
 
@@ -174,16 +209,15 @@ export async function POST(request: NextRequest) {
           originalUrl: link.originalUrl,
           shortUrl: `https://${ROOT_DOMAIN}/${link.slug}`,
           clicks: link.clicks,
+          expiresAt: link.expiresAt,
+          hasPassword: !!link.password,
           createdAt: link.createdAt,
         },
         { status: 201 }
       );
     } catch (error) {
       console.error("[links] Create with alias error:", error);
-      return NextResponse.json(
-        { error: "Failed to create link." },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to create link." }, { status: 500 });
     }
   }
 
@@ -199,7 +233,8 @@ export async function POST(request: NextRequest) {
           slug,
           originalUrl,
           userId: session.user.id,
-          expiresAt: null, // Permanent
+          expiresAt,
+          password,
         },
       });
       break;
@@ -214,10 +249,7 @@ export async function POST(request: NextRequest) {
         continue;
       }
       console.error("[links] Database error:", error);
-      return NextResponse.json(
-        { error: "Internal server error" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
   }
 
@@ -235,6 +267,8 @@ export async function POST(request: NextRequest) {
       originalUrl: link.originalUrl,
       shortUrl: `https://${ROOT_DOMAIN}/${link.slug}`,
       clicks: link.clicks,
+      expiresAt: link.expiresAt,
+      hasPassword: !!link.password,
       createdAt: link.createdAt,
     },
     { status: 201 }
@@ -248,32 +282,22 @@ export async function DELETE(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user?.id) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
   const linkId = searchParams.get("id");
 
   if (!linkId) {
-    return NextResponse.json(
-      { error: "Missing link ID" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Missing link ID" }, { status: 400 });
   }
 
-  // Verify ownership
   const link = await prisma.link.findFirst({
     where: { id: linkId, userId: session.user.id },
   });
 
   if (!link) {
-    return NextResponse.json(
-      { error: "Link not found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "Link not found" }, { status: 404 });
   }
 
   await prisma.link.delete({ where: { id: linkId } });
