@@ -86,7 +86,8 @@ model Link {
   userId             String?   // null if created by anonymous/guest user
   anonymousSessionId String?   // cookie-based ID for unauthenticated users
   clicks             Int       @default(0)
-  expiresAt          DateTime? // null = permanent (authenticated), set = 24h for guests
+  expiresAt          DateTime? // null = no expiration, set = link expires at this time
+  password           String?   // Optional password protection (plain text for now)
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 

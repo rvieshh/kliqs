@@ -22,6 +22,8 @@ import {
   X,
   Check,
   AlertCircle,
+  Lock,
+  Clock,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,6 +38,8 @@ interface LinkItem {
   slug: string;
   originalUrl: string;
   clicks: number;
+  expiresAt: string | null;
+  hasPassword: boolean;
   createdAt: string;
 }
 
@@ -55,6 +59,8 @@ export default function LinksPage() {
   // Form state
   const [url, setUrl] = useState("");
   const [customAlias, setCustomAlias] = useState("");
+  const [expiration, setExpiration] = useState("7d");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -101,6 +107,8 @@ export default function LinksPage() {
         body: JSON.stringify({
           url: url.trim(),
           customAlias: customAlias.trim() || undefined,
+          expiration,
+          password: password.trim() || undefined,
         }),
       });
 
@@ -115,6 +123,8 @@ export default function LinksPage() {
       setShowModal(false);
       setUrl("");
       setCustomAlias("");
+      setExpiration("7d");
+      setPassword("");
       fetchLinks(); // Refresh list
     } catch {
       setToast({ type: "error", message: "Network error. Please try again." });
@@ -273,7 +283,11 @@ export default function LinksPage() {
                     {links.map((link) => (
                       <tr key={link.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-6 py-4">
-                          <span className="text-sm font-semibold text-[#4361ee]">kliqs.me/{link.slug}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-[#4361ee]">kliqs.me/{link.slug}</span>
+                            {link.hasPassword && <Lock className="w-3 h-3 text-amber-500" title="Password protected" />}
+                            {link.expiresAt && <Clock className="w-3 h-3 text-gray-400" title={`Expires ${new Date(link.expiresAt).toLocaleDateString()}`} />}
+                          </div>
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-sm text-gray-600 truncate max-w-[200px] block">{link.originalUrl}</span>
@@ -335,13 +349,14 @@ export default function LinksPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Destination URL</label>
                 <input
-                  type="url"
+                  type="text"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://example.com/your-long-url"
+                  placeholder="example.com/your-long-url"
                   required
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all placeholder:text-gray-300"
                 />
+                <p className="text-xs text-gray-400 mt-1">https:// will be added automatically if missing</p>
               </div>
 
               {/* Custom Alias */}
@@ -359,7 +374,37 @@ export default function LinksPage() {
                     className="flex-1 px-3 py-3 text-sm focus:outline-none placeholder:text-gray-300"
                   />
                 </div>
-                <p className="text-xs text-gray-400 mt-1">3-30 characters: letters, numbers, hyphens, underscores</p>
+              </div>
+
+              {/* Expiration */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Expiration</label>
+                <select
+                  value={expiration}
+                  onChange={(e) => setExpiration(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all bg-white appearance-none cursor-pointer"
+                >
+                  <option value="1d">1 Day</option>
+                  <option value="7d">7 Days (Default)</option>
+                  <option value="14d">14 Days</option>
+                  <option value="30d">30 Days</option>
+                  <option value="never">No Expiration</option>
+                </select>
+              </div>
+
+              {/* Password Protection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Password Protection <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Leave empty for no protection"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all placeholder:text-gray-300"
+                />
+                <p className="text-xs text-gray-400 mt-1">Visitors must enter this password to access the link</p>
               </div>
 
               {/* Submit */}
