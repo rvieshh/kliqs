@@ -20,6 +20,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { ClaimOnLogin } from "@/components/claim-on-login";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -215,7 +216,7 @@ export default function DashboardPage() {
             <QuickActionCard
               icon={Link2}
               label="Short new Link"
-              href="https://home.kliqs.me"
+              href="/links"
               bgColor="bg-[#635bff]/5"
               iconColor="text-[#635bff]"
               borderHover="hover:border-[#635bff]/30"
@@ -223,7 +224,7 @@ export default function DashboardPage() {
             <QuickActionCard
               icon={QrCode}
               label="Create new QR Codes"
-              href="#qr-codes"
+              href="/qr-codes"
               bgColor="bg-purple-50"
               iconColor="text-purple-500"
               borderHover="hover:border-purple-200"
@@ -231,7 +232,7 @@ export default function DashboardPage() {
             <QuickActionCard
               icon={User}
               label="Create new Bio Page"
-              href="#bio-page"
+              href="/bio-page"
               bgColor="bg-blue-50"
               iconColor="text-blue-500"
               borderHover="hover:border-blue-200"
@@ -452,7 +453,7 @@ function QuickActionCard({
   borderHover: string;
 }) {
   return (
-    <a
+    <Link
       href={href}
       className={`flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-100 ${borderHover} transition-all hover:shadow-sm group cursor-pointer`}
     >
@@ -463,7 +464,7 @@ function QuickActionCard({
         {label}
       </span>
       <ChevronRight className="w-4 h-4 text-gray-300 ml-auto group-hover:text-gray-500 transition-colors" />
-    </a>
+    </Link>
   );
 }
 
