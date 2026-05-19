@@ -1,6 +1,6 @@
 "use client";
 
-import { LinkOff, ArrowRight, Home } from "lucide-react";
+import { Link2Off, ArrowRight, Home } from "lucide-react";
 import Link from "next/link";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -13,7 +13,7 @@ export default function LinkNotFoundPage() {
       <div className="max-w-md w-full text-center">
         {/* Icon */}
         <div className="w-20 h-20 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-6">
-          <LinkOff className="w-10 h-10 text-red-400" />
+          <Link2Off className="w-10 h-10 text-red-400" />
         </div>
 
         {/* Title */}
