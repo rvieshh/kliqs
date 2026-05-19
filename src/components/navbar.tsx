@@ -57,7 +57,7 @@ export function Navbar() {
 
                 {/* Sign Out */}
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => signOut({ callbackUrl: "https://home.kliqs.me" })}
                   className="p-2 rounded-lg text-muted hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                   title="Sign out"
                 >
