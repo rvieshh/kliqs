@@ -4,7 +4,11 @@ import { prisma } from "@/lib/prisma";
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/links/verify-password
 // Verifies a password for a password-protected link.
-// Returns the destination URL if password is correct.
+// Also serves as a "link check" endpoint:
+// - 404: link doesn't exist
+// - 410: link has expired
+// - 403: link has a password and the provided password is wrong/empty
+// - 200: password correct OR link has no password → returns destinationUrl
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
@@ -17,10 +21,10 @@ export async function POST(request: NextRequest) {
   }
 
   const slug = body.slug?.trim();
-  const password = body.password?.trim();
+  const password = body.password ?? "";
 
-  if (!slug || !password) {
-    return NextResponse.json({ error: "Missing slug or password" }, { status: 400 });
+  if (!slug) {
+    return NextResponse.json({ error: "Missing slug" }, { status: 400 });
   }
 
   const link = await prisma.link.findUnique({
@@ -37,7 +41,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "This link has expired" }, { status: 410 });
   }
 
-  // Verify password
+  // If the link has no password, return destination immediately
+  if (!link.password) {
+    // Increment clicks (fire-and-forget)
+    prisma.link.update({
+      where: { id: link.id },
+      data: { clicks: { increment: 1 } },
+    }).catch(() => {});
+
+    return NextResponse.json({ destinationUrl: link.originalUrl });
+  }
+
+  // Link has a password — verify it
   if (link.password !== password) {
     return NextResponse.json({ error: "Incorrect password" }, { status: 403 });
   }
