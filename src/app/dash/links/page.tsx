@@ -24,6 +24,7 @@ import {
   AlertCircle,
   Lock,
   Clock,
+  ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -60,6 +61,7 @@ export default function LinksPage() {
   const [url, setUrl] = useState("");
   const [customAlias, setCustomAlias] = useState("");
   const [expiration, setExpiration] = useState("7d");
+  const [expirationOpen, setExpirationOpen] = useState(false);
   const [password, setPassword] = useState("");
 
   useEffect(() => {
@@ -377,19 +379,47 @@ export default function LinksPage() {
               </div>
 
               {/* Expiration */}
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Expiration</label>
-                <select
-                  value={expiration}
-                  onChange={(e) => setExpiration(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all bg-white appearance-none cursor-pointer"
+                <button
+                  type="button"
+                  onClick={() => setExpirationOpen(!expirationOpen)}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all bg-white cursor-pointer"
                 >
-                  <option value="1d">1 Day</option>
-                  <option value="7d">7 Days (Default)</option>
-                  <option value="14d">14 Days</option>
-                  <option value="30d">30 Days</option>
-                  <option value="never">No Expiration</option>
-                </select>
+                  <span className="text-gray-900">
+                    {expiration === "1d" && "1 Day"}
+                    {expiration === "7d" && "7 Days"}
+                    {expiration === "14d" && "14 Days"}
+                    {expiration === "30d" && "30 Days"}
+                    {expiration === "never" && "No Expiration"}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${expirationOpen ? "rotate-180" : ""}`} />
+                </button>
+                {expirationOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-xl border border-gray-100 shadow-lg z-50 overflow-hidden">
+                    {[
+                      { value: "1d", label: "1 Day" },
+                      { value: "7d", label: "7 Days" },
+                      { value: "14d", label: "14 Days" },
+                      { value: "30d", label: "30 Days" },
+                      { value: "never", label: "No Expiration" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => { setExpiration(opt.value); setExpirationOpen(false); }}
+                        className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors cursor-pointer ${
+                          expiration === opt.value
+                            ? "bg-[#4361ee]/5 text-[#4361ee] font-medium"
+                            : "text-gray-700 hover:bg-slate-50"
+                        }`}
+                      >
+                        <span>{opt.label}</span>
+                        {expiration === opt.value && <Check className="w-3.5 h-3.5" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Password Protection */}
