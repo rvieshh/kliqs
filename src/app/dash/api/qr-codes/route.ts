@@ -69,25 +69,54 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: {
-    title?: string;
-    destinationUrl?: string;
-    foregroundColor?: string;
-    backgroundColor?: string;
-    logoUrl?: string;
-  };
+  let title = "";
+  let destinationUrl = "";
+  let foregroundColor = "#000000";
+  let backgroundColor = "#FFFFFF";
+  let logoUrl: string | null = null;
 
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  // Support both JSON and FormData
+  const contentType = request.headers.get("content-type") || "";
+
+  if (contentType.includes("multipart/form-data")) {
+    const formData = await request.formData();
+    title = (formData.get("title") as string)?.trim() || "";
+    destinationUrl = (formData.get("destinationUrl") as string)?.trim() || "";
+    foregroundColor = (formData.get("foregroundColor") as string)?.trim() || "#000000";
+    backgroundColor = (formData.get("backgroundColor") as string)?.trim() || "#FFFFFF";
+
+    // Handle logo file upload
+    const logoFile = formData.get("logo") as File | null;
+    if (logoFile && logoFile.size > 0) {
+      // For now, convert to data URL (in production, upload to S3)
+      const bytes = await logoFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const base64 = buffer.toString("base64");
+      const mimeType = logoFile.type || "image/png";
+      logoUrl = `data:${mimeType};base64,${base64}`;
+    }
+  } else {
+    // JSON body
+    let body: {
+      title?: string;
+      destinationUrl?: string;
+      foregroundColor?: string;
+      backgroundColor?: string;
+      logoUrl?: string;
+    };
+
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
+
+    title = body.title?.trim() || "";
+    destinationUrl = body.destinationUrl?.trim() || "";
+    foregroundColor = body.foregroundColor?.trim() || "#000000";
+    backgroundColor = body.backgroundColor?.trim() || "#FFFFFF";
+    logoUrl = body.logoUrl?.trim() || null;
   }
-
-  const title = body.title?.trim();
-  let destinationUrl = body.destinationUrl?.trim() || "";
-  const foregroundColor = body.foregroundColor?.trim() || "#000000";
-  const backgroundColor = body.backgroundColor?.trim() || "#FFFFFF";
-  const logoUrl = body.logoUrl?.trim() || null;
 
   // Validate required fields
   if (!title) {
@@ -98,15 +127,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing required field: destinationUrl" }, { status: 400 });
   }
 
-  // Smart URL formatting
-  destinationUrl = formatUrl(destinationUrl);
-
-  if (!isValidUrl(destinationUrl)) {
+  // Enforce 1500 character limit for text payloads
+  if (destinationUrl.length > 1500) {
     return NextResponse.json(
-      { error: "Invalid URL. Must be a valid HTTP or HTTPS URL." },
+      { error: "Content exceeds 1,500 character limit." },
       { status: 400 }
     );
   }
+
+  // Smart URL formatting — only if it looks like a URL
+  if (/^(www\.|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})/.test(destinationUrl) || /^https?:\/\//.test(destinationUrl)) {
+    destinationUrl = formatUrl(destinationUrl);
+    if (!isValidUrl(destinationUrl)) {
+      return NextResponse.json(
+        { error: "Invalid URL format." },
+        { status: 400 }
+      );
+    }
+  }
+  // Otherwise it's plain text — allowed for QR codes
 
   // Validate colors
   if (!isValidHexColor(foregroundColor)) {
