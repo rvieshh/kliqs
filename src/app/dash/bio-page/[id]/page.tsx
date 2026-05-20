@@ -71,6 +71,9 @@ export default function BioPageBuilderPage() {
   const [buttonBgColor, setButtonBgColor] = useState("#1a1a1a");
   const [buttonTextColor, setButtonTextColor] = useState("#ffffff");
   const [accentColor, setAccentColor] = useState("#4361ee");
+  const [avatarBorderEnabled, setAvatarBorderEnabled] = useState(false);
+  const [avatarBorderColor, setAvatarBorderColor] = useState("#4361ee");
+  const [avatarBorderWidth, setAvatarBorderWidth] = useState(4);
   const [published, setPublished] = useState(false);
   const [links, setLinks] = useState<BioLinkItem[]>([]);
 
@@ -110,6 +113,9 @@ export default function BioPageBuilderPage() {
       setButtonBgColor(page.buttonBgColor || "#1a1a1a");
       setButtonTextColor(page.buttonTextColor || "#ffffff");
       setAccentColor(page.accentColor || "#4361ee");
+      setAvatarBorderEnabled(page.avatarBorderEnabled ?? false);
+      setAvatarBorderColor(page.avatarBorderColor || "#4361ee");
+      setAvatarBorderWidth(page.avatarBorderWidth ?? 4);
       setPublished(page.published);
       setLinks(page.links || []);
     } catch {
@@ -131,6 +137,9 @@ export default function BioPageBuilderPage() {
       formData.append("buttonBgColor", buttonBgColor);
       formData.append("buttonTextColor", buttonTextColor);
       formData.append("accentColor", accentColor);
+      formData.append("avatarBorderEnabled", String(avatarBorderEnabled));
+      formData.append("avatarBorderColor", avatarBorderColor);
+      formData.append("avatarBorderWidth", String(avatarBorderWidth));
       if (avatarFile) formData.append("avatar", avatarFile);
       if (bgImageFile) formData.append("backgroundImage", bgImageFile);
       formData.append("links", JSON.stringify(links.map((l, i) => ({ title: l.title, url: l.url, icon: l.icon, thumbnailUrl: l.thumbnailUrl || "", order: i }))));
@@ -284,6 +293,53 @@ export default function BioPageBuilderPage() {
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all placeholder:text-gray-300 resize-none"
               />
             </div>
+          </div>
+        </section>
+
+        {/* Avatar Border Settings */}
+        <section className="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">Profile Border</h2>
+          <div className="space-y-4">
+            {/* Toggle */}
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700">Enable Avatar Border</label>
+              <button
+                onClick={() => setAvatarBorderEnabled(!avatarBorderEnabled)}
+                className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${avatarBorderEnabled ? "bg-[#4361ee]" : "bg-gray-300"}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${avatarBorderEnabled ? "translate-x-5" : "translate-x-0"}`} />
+              </button>
+            </div>
+
+            {avatarBorderEnabled && (
+              <>
+                {/* Border Color */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Border Color</label>
+                  <div className="flex items-center gap-2">
+                    <input type="color" value={avatarBorderColor} onChange={(e) => setAvatarBorderColor(e.target.value)} className="w-8 h-8 rounded border border-gray-200 cursor-pointer" />
+                    <input type="text" value={avatarBorderColor} onChange={(e) => setAvatarBorderColor(e.target.value)} className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee]" />
+                  </div>
+                </div>
+
+                {/* Border Width */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Border Width ({avatarBorderWidth}px)</label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={15}
+                    value={avatarBorderWidth}
+                    onChange={(e) => setAvatarBorderWidth(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#4361ee]"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>1px</span>
+                    <span>15px</span>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </section>
 
