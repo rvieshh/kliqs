@@ -26,6 +26,7 @@ interface BioLinkItem {
   title: string;
   url: string;
   icon: string;
+  thumbnailUrl?: string;
   order: number;
 }
 
@@ -60,6 +61,12 @@ export default function BioPageBuilderPage() {
   const [displayName, setDisplayName] = useState("");
   const [description, setDescription] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#0a0a0a");
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
+  const [bgImageFile, setBgImageFile] = useState<File | null>(null);
+  const [bgType, setBgType] = useState<"solid" | "image">("solid");
   const [published, setPublished] = useState(false);
   const [links, setLinks] = useState<BioLinkItem[]>([]);
 
@@ -91,6 +98,10 @@ export default function BioPageBuilderPage() {
       setDisplayName(page.displayName || page.title || "");
       setDescription(page.description || "");
       setAvatarUrl(page.avatarUrl || "");
+      setAvatarPreview(page.avatarUrl || "");
+      setBackgroundColor(page.backgroundColor || "#0a0a0a");
+      setBackgroundImageUrl(page.backgroundImageUrl || "");
+      setBgType(page.backgroundImageUrl ? "image" : "solid");
       setPublished(page.published);
       setLinks(page.links || []);
     } catch {
@@ -103,16 +114,18 @@ export default function BioPageBuilderPage() {
   async function handleSave() {
     setIsSaving(true);
     try {
+      const formData = new FormData();
+      formData.append("displayName", displayName);
+      formData.append("description", description);
+      formData.append("published", String(published));
+      formData.append("backgroundColor", bgType === "solid" ? backgroundColor : "");
+      if (avatarFile) formData.append("avatar", avatarFile);
+      if (bgImageFile) formData.append("backgroundImage", bgImageFile);
+      formData.append("links", JSON.stringify(links.map((l, i) => ({ title: l.title, url: l.url, icon: l.icon, thumbnailUrl: l.thumbnailUrl || "", order: i }))));
+
       const res = await fetch(`/api/bio-pages/${pageId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          displayName,
-          description,
-          avatarUrl,
-          published,
-          links: links.map((l, i) => ({ title: l.title, url: l.url, icon: l.icon, order: i })),
-        }),
+        body: formData,
       });
       const data = await res.json();
       if (!res.ok) {
@@ -130,7 +143,7 @@ export default function BioPageBuilderPage() {
   }
 
   function addLink() {
-    setLinks([...links, { title: "", url: "", icon: "globe", order: links.length }]);
+    setLinks([...links, { title: "", url: "", icon: "globe", thumbnailUrl: "", order: links.length }]);
   }
 
   function removeLink(index: number) {
@@ -219,16 +232,23 @@ export default function BioPageBuilderPage() {
         <section className="bg-white rounded-2xl border border-gray-100 p-6">
           <h2 className="text-sm font-semibold text-gray-900 mb-4">Profile</h2>
           <div className="space-y-4">
-            {/* Avatar URL */}
+            {/* Avatar Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Avatar URL</label>
-              <input
-                type="url"
-                value={avatarUrl}
-                onChange={(e) => setAvatarUrl(e.target.value)}
-                placeholder="https://yoursite.com/avatar.jpg"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all placeholder:text-gray-300"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Profile Picture</label>
+              {avatarPreview ? (
+                <div className="flex items-center gap-4">
+                  <img src={avatarPreview} alt="Avatar" className="w-16 h-16 rounded-full object-cover ring-2 ring-gray-100" />
+                  <label className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#4361ee] bg-[#4361ee]/5 rounded-lg hover:bg-[#4361ee]/10 transition-colors cursor-pointer">
+                    Change
+                    <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setAvatarFile(f); setAvatarPreview(URL.createObjectURL(f)); } }} className="hidden" />
+                  </label>
+                </div>
+              ) : (
+                <label className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-gray-300 hover:border-[#4361ee] hover:bg-[#4361ee]/5 transition-all cursor-pointer">
+                  <span className="text-sm text-gray-500">Upload profile picture</span>
+                  <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) { setAvatarFile(f); setAvatarPreview(URL.createObjectURL(f)); } }} className="hidden" />
+                </label>
+              )}
             </div>
             {/* Display Name */}
             <div>
@@ -252,6 +272,29 @@ export default function BioPageBuilderPage() {
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] transition-all placeholder:text-gray-300 resize-none"
               />
             </div>
+          </div>
+        </section>
+
+        {/* Background Settings */}
+        <section className="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">Background</h2>
+          <div className="space-y-4">
+            {/* Type Toggle */}
+            <div className="flex gap-2">
+              <button onClick={() => setBgType("solid")} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${bgType === "solid" ? "bg-[#4361ee]/10 text-[#4361ee] border border-[#4361ee]/20" : "bg-gray-50 text-gray-500 border border-gray-200"}`}>Solid Color</button>
+              <button onClick={() => setBgType("image")} className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${bgType === "image" ? "bg-[#4361ee]/10 text-[#4361ee] border border-[#4361ee]/20" : "bg-gray-50 text-gray-500 border border-gray-200"}`}>Custom Image</button>
+            </div>
+            {bgType === "solid" ? (
+              <div className="flex items-center gap-3">
+                <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer" />
+                <input type="text" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee]" />
+              </div>
+            ) : (
+              <label className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-gray-300 hover:border-[#4361ee] hover:bg-[#4361ee]/5 transition-all cursor-pointer">
+                <span className="text-sm text-gray-500">{bgImageFile ? bgImageFile.name : "Upload background image"}</span>
+                <input type="file" accept="image/*" onChange={(e) => { const f = e.target.files?.[0]; if (f) setBgImageFile(f); }} className="hidden" />
+              </label>
+            )}
           </div>
         </section>
 
@@ -298,6 +341,13 @@ export default function BioPageBuilderPage() {
                       onChange={(e) => updateLink(index, "url", e.target.value)}
                       placeholder="https://example.com"
                       className="px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] placeholder:text-gray-300"
+                    />
+                    <input
+                      type="url"
+                      value={link.thumbnailUrl || ""}
+                      onChange={(e) => updateLink(index, "thumbnailUrl", e.target.value)}
+                      placeholder="Thumbnail URL (optional)"
+                      className="px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#4361ee]/20 focus:border-[#4361ee] placeholder:text-gray-300 sm:col-span-2"
                     />
                   </div>
                   {/* Delete */}
