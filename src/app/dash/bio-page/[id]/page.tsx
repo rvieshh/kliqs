@@ -67,6 +67,10 @@ export default function BioPageBuilderPage() {
   const [backgroundImageUrl, setBackgroundImageUrl] = useState("");
   const [bgImageFile, setBgImageFile] = useState<File | null>(null);
   const [bgType, setBgType] = useState<"solid" | "image">("solid");
+  const [textColor, setTextColor] = useState("#f8fafc");
+  const [buttonBgColor, setButtonBgColor] = useState("#1a1a1a");
+  const [buttonTextColor, setButtonTextColor] = useState("#ffffff");
+  const [accentColor, setAccentColor] = useState("#4361ee");
   const [published, setPublished] = useState(false);
   const [links, setLinks] = useState<BioLinkItem[]>([]);
 
@@ -102,6 +106,10 @@ export default function BioPageBuilderPage() {
       setBackgroundColor(page.backgroundColor || "#0a0a0a");
       setBackgroundImageUrl(page.backgroundImageUrl || "");
       setBgType(page.backgroundImageUrl ? "image" : "solid");
+      setTextColor(page.textColor || "#f8fafc");
+      setButtonBgColor(page.buttonBgColor || "#1a1a1a");
+      setButtonTextColor(page.buttonTextColor || "#ffffff");
+      setAccentColor(page.accentColor || "#4361ee");
       setPublished(page.published);
       setLinks(page.links || []);
     } catch {
@@ -119,6 +127,10 @@ export default function BioPageBuilderPage() {
       formData.append("description", description);
       formData.append("published", String(published));
       formData.append("backgroundColor", bgType === "solid" ? backgroundColor : "");
+      formData.append("textColor", textColor);
+      formData.append("buttonBgColor", buttonBgColor);
+      formData.append("buttonTextColor", buttonTextColor);
+      formData.append("accentColor", accentColor);
       if (avatarFile) formData.append("avatar", avatarFile);
       if (bgImageFile) formData.append("backgroundImage", bgImageFile);
       formData.append("links", JSON.stringify(links.map((l, i) => ({ title: l.title, url: l.url, icon: l.icon, thumbnailUrl: l.thumbnailUrl || "", order: i }))));
@@ -299,6 +311,43 @@ export default function BioPageBuilderPage() {
         </section>
 
         {/* Links Section */}
+        <section className="bg-white rounded-2xl border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-gray-900">Theme & Colors</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Text Color</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} className="w-8 h-8 rounded border border-gray-200 cursor-pointer" />
+                <input type="text" value={textColor} onChange={(e) => setTextColor(e.target.value)} className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-xs" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Accent Color</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} className="w-8 h-8 rounded border border-gray-200 cursor-pointer" />
+                <input type="text" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-xs" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Button Background</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={buttonBgColor} onChange={(e) => setButtonBgColor(e.target.value)} className="w-8 h-8 rounded border border-gray-200 cursor-pointer" />
+                <input type="text" value={buttonBgColor} onChange={(e) => setButtonBgColor(e.target.value)} className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-xs" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Button Text</label>
+              <div className="flex items-center gap-2">
+                <input type="color" value={buttonTextColor} onChange={(e) => setButtonTextColor(e.target.value)} className="w-8 h-8 rounded border border-gray-200 cursor-pointer" />
+                <input type="text" value={buttonTextColor} onChange={(e) => setButtonTextColor(e.target.value)} className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-xs" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Links Management */}
         <section className="bg-white rounded-2xl border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-gray-900">Links</h2>

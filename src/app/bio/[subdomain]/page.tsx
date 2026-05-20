@@ -57,6 +57,12 @@ export default async function PublicBioPage({
   const bgColor = bioPage.backgroundColor || "#0a0a0a";
   const hasBgImage = !!bioPage.backgroundImageUrl;
 
+  // Theme colors
+  const textColor = bioPage.textColor || "#f8fafc";
+  const buttonBgColor = bioPage.buttonBgColor || "#1a1a1a";
+  const buttonTextColor = bioPage.buttonTextColor || "#ffffff";
+  const accentColor = bioPage.accentColor || "#4361ee";
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 relative" style={{ backgroundColor: bgColor }}>
       {/* Background Image with overlay */}
@@ -71,16 +77,16 @@ export default async function PublicBioPage({
         {/* Profile */}
         <div className="text-center mb-10">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} className="w-24 h-24 rounded-full mx-auto mb-5 ring-4 ring-white/10 shadow-2xl object-cover" />
+            <img src={avatarUrl} alt={displayName} className="w-24 h-24 rounded-full mx-auto mb-5 ring-4 shadow-2xl object-cover" style={{ ringColor: `${textColor}20` }} />
           ) : (
-            <div className="w-24 h-24 rounded-full mx-auto mb-5 bg-gradient-to-br from-[#4361ee] to-[#7c3aed] flex items-center justify-center ring-4 ring-white/10 shadow-2xl">
+            <div className="w-24 h-24 rounded-full mx-auto mb-5 flex items-center justify-center ring-4 shadow-2xl" style={{ background: `linear-gradient(135deg, ${accentColor}, #7c3aed)`, ringColor: `${textColor}20` }}>
               <span className="text-3xl font-bold text-white">{displayName.charAt(0).toUpperCase()}</span>
             </div>
           )}
-          <h1 className="text-2xl font-bold text-white mb-1">{displayName}</h1>
-          <p className="text-sm text-[#4361ee] font-medium mb-3">@{bioPage.handle}</p>
+          <h1 className="text-2xl font-bold mb-1" style={{ color: textColor }}>{displayName}</h1>
+          <p className="text-sm font-medium mb-3" style={{ color: accentColor }}>@{bioPage.handle}</p>
           {bioPage.description && (
-            <p className="text-sm text-gray-400 max-w-xs mx-auto leading-relaxed">{bioPage.description}</p>
+            <p className="text-sm max-w-xs mx-auto leading-relaxed" style={{ color: `${textColor}99` }}>{bioPage.description}</p>
           )}
         </div>
 
@@ -88,25 +94,25 @@ export default async function PublicBioPage({
         <div className="space-y-3">
           {bioPage.links.length > 0 ? (
             bioPage.links.map((link) => (
-              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-[#4361ee]/40 transition-all group backdrop-blur-sm">
+              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 w-full px-5 py-4 rounded-2xl transition-all hover:opacity-90 hover:scale-[1.02]" style={{ backgroundColor: buttonBgColor, color: buttonTextColor, border: `1px solid ${accentColor}30` }}>
                 {link.thumbnailUrl ? (
                   <img src={link.thumbnailUrl} alt={link.title} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                 ) : (
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                    <Globe className="w-5 h-5 text-[#4361ee]" />
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${accentColor}20` }}>
+                    <Globe className="w-5 h-5" style={{ color: accentColor }} />
                   </div>
                 )}
-                <span className="text-sm font-medium text-white flex-1">{link.title}</span>
-                <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-[#4361ee] transition-colors flex-shrink-0" />
+                <span className="text-sm font-medium flex-1">{link.title}</span>
+                <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-50" />
               </a>
             ))
           ) : (
-            <div className="text-center py-6"><p className="text-sm text-gray-500">No links added yet.</p></div>
+            <div className="text-center py-6"><p className="text-sm" style={{ color: `${textColor}60` }}>No links added yet.</p></div>
           )}
         </div>
 
         <div className="mt-12 text-center">
-          <a href="https://home.kliqs.me" className="inline-flex items-center gap-2 text-xs text-gray-600 hover:text-gray-400 transition-colors">Powered by Kliqs.me</a>
+          <a href="https://home.kliqs.me" className="inline-flex items-center gap-2 text-xs transition-colors hover:opacity-80" style={{ color: `${textColor}40` }}>Powered by Kliqs.me</a>
         </div>
       </div>
     </div>

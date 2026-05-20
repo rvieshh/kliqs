@@ -82,6 +82,16 @@ export async function PATCH(
     if (published !== null) updateData.published = published === "true";
     if (backgroundColor !== null) updateData.backgroundColor = backgroundColor.trim() || null;
 
+    // Theme color fields from FormData
+    const textColor = formData.get("textColor") as string | null;
+    const buttonBgColor = formData.get("buttonBgColor") as string | null;
+    const buttonTextColor = formData.get("buttonTextColor") as string | null;
+    const accentColor = formData.get("accentColor") as string | null;
+    if (textColor !== null) updateData.textColor = textColor.trim();
+    if (buttonBgColor !== null) updateData.buttonBgColor = buttonBgColor.trim();
+    if (buttonTextColor !== null) updateData.buttonTextColor = buttonTextColor.trim();
+    if (accentColor !== null) updateData.accentColor = accentColor.trim();
+
     // Avatar file upload
     const avatarFile = formData.get("avatar") as File | null;
     if (avatarFile && avatarFile.size > 0) {
@@ -128,6 +138,10 @@ export async function PATCH(
     if (body.avatarUrl !== undefined) updateData.avatarUrl = body.avatarUrl.trim() || null;
     if (body.backgroundColor !== undefined) updateData.backgroundColor = body.backgroundColor.trim() || null;
     if (body.backgroundImageUrl !== undefined) updateData.backgroundImageUrl = body.backgroundImageUrl.trim() || null;
+    if ((body as Record<string, unknown>).textColor !== undefined) updateData.textColor = ((body as Record<string, unknown>).textColor as string).trim();
+    if ((body as Record<string, unknown>).buttonBgColor !== undefined) updateData.buttonBgColor = ((body as Record<string, unknown>).buttonBgColor as string).trim();
+    if ((body as Record<string, unknown>).buttonTextColor !== undefined) updateData.buttonTextColor = ((body as Record<string, unknown>).buttonTextColor as string).trim();
+    if ((body as Record<string, unknown>).accentColor !== undefined) updateData.accentColor = ((body as Record<string, unknown>).accentColor as string).trim();
     if (body.published !== undefined) updateData.published = body.published;
     if (body.links !== undefined) linksData = body.links;
   }
