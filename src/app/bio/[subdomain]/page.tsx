@@ -3,8 +3,8 @@ import { Globe, ExternalLink, Link2Off } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Public Bio Page — Rendered at [username].kliqs.me
-// Server Component: fetches bio page data from DB based on subdomain param.
-// Shows a custom "not found" UI if the subdomain doesn't exist.
+// Server Component: fetches bio page + links from DB based on subdomain param.
+// Shows custom "not found" UI if subdomain doesn't exist or page is unpublished.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default async function PublicBioPage({
@@ -14,17 +14,18 @@ export default async function PublicBioPage({
 }) {
   const { subdomain } = await params;
 
-  // Fetch bio page by handle (subdomain)
+  // Fetch bio page with associated links
   const bioPage = await prisma.bioPage.findUnique({
     where: { handle: subdomain },
     include: {
+      links: { orderBy: { order: "asc" } },
       user: {
         select: { name: true, email: true, image: true },
       },
     },
   });
 
-  // Custom "Not Found" UI — shown when subdomain doesn't exist or page is unpublished
+  // Custom "Not Found" UI
   if (!bioPage || !bioPage.published) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-4 py-12">
@@ -53,11 +54,12 @@ export default async function PublicBioPage({
     data: { views: { increment: 1 } },
   }).catch(() => {});
 
-  const userName = bioPage.user?.name || bioPage.title;
+  // Determine display values
+  const displayName = bioPage.displayName || bioPage.title;
   const userEmail = bioPage.user?.email || "";
 
-  // Generate gravatar for avatar
-  let avatarUrl = bioPage.user?.image || "";
+  // Avatar: custom > user image > gravatar
+  let avatarUrl = bioPage.avatarUrl || bioPage.user?.image || "";
   if (!avatarUrl && userEmail) {
     const { createHash } = await import("crypto");
     const hash = createHash("md5").update(userEmail.trim().toLowerCase()).digest("hex");
@@ -65,27 +67,27 @@ export default async function PublicBioPage({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Profile Card */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           {/* Avatar */}
           {avatarUrl ? (
             <img
               src={avatarUrl}
-              alt={userName}
-              className="w-24 h-24 rounded-full mx-auto mb-4 ring-4 ring-white shadow-lg"
+              alt={displayName}
+              className="w-24 h-24 rounded-full mx-auto mb-5 ring-4 ring-white/10 shadow-2xl object-cover"
             />
           ) : (
-            <div className="w-24 h-24 rounded-full mx-auto mb-4 bg-gradient-to-br from-[#4361ee] to-[#7c3aed] flex items-center justify-center ring-4 ring-white shadow-lg">
+            <div className="w-24 h-24 rounded-full mx-auto mb-5 bg-gradient-to-br from-[#4361ee] to-[#7c3aed] flex items-center justify-center ring-4 ring-white/10 shadow-2xl">
               <span className="text-3xl font-bold text-white">
-                {userName.charAt(0).toUpperCase()}
+                {displayName.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
 
           {/* Name */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">{bioPage.title}</h1>
+          <h1 className="text-2xl font-bold text-white mb-1">{displayName}</h1>
 
           {/* Handle */}
           <p className="text-sm text-[#4361ee] font-medium mb-3">
@@ -94,31 +96,42 @@ export default async function PublicBioPage({
 
           {/* Bio */}
           {bioPage.description && (
-            <p className="text-sm text-gray-500 max-w-xs mx-auto leading-relaxed">
+            <p className="text-sm text-gray-400 max-w-xs mx-auto leading-relaxed">
               {bioPage.description}
             </p>
           )}
         </div>
 
-        {/* Links placeholder — future feature */}
+        {/* Links */}
         <div className="space-y-3">
-          <a
-            href={`https://kliqs.me`}
-            className="flex items-center justify-between w-full px-5 py-4 bg-white border border-gray-200 rounded-2xl hover:border-[#4361ee]/30 hover:shadow-sm transition-all group"
-          >
-            <div className="flex items-center gap-3">
-              <Globe className="w-5 h-5 text-[#4361ee]" />
-              <span className="text-sm font-medium text-gray-800">Visit Kliqs.me</span>
+          {bioPage.links.length > 0 ? (
+            bioPage.links.map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-[#4361ee]/40 transition-all group backdrop-blur-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <Globe className="w-5 h-5 text-[#4361ee]" />
+                  <span className="text-sm font-medium text-white">{link.title}</span>
+                </div>
+                <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-[#4361ee] transition-colors" />
+              </a>
+            ))
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-sm text-gray-500">No links added yet.</p>
             </div>
-            <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-[#4361ee] transition-colors" />
-          </a>
+          )}
         </div>
 
         {/* Footer */}
         <div className="mt-12 text-center">
           <a
             href="https://home.kliqs.me"
-            className="inline-flex items-center gap-2 text-xs text-gray-300 hover:text-gray-500 transition-colors"
+            className="inline-flex items-center gap-2 text-xs text-gray-600 hover:text-gray-400 transition-colors"
           >
             Powered by Kliqs.me
           </a>
