@@ -77,9 +77,9 @@ export default async function PublicBioPage({
         {/* Profile */}
         <div className="text-center mb-10">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} className="w-24 h-24 rounded-full mx-auto mb-5 ring-4 shadow-2xl object-cover" style={{ ringColor: `${textColor}20` }} />
+            <img src={avatarUrl} alt={displayName} className="w-24 h-24 rounded-full mx-auto mb-5 border-4 shadow-2xl object-cover" style={{ borderColor: `${textColor}20` }} />
           ) : (
-            <div className="w-24 h-24 rounded-full mx-auto mb-5 flex items-center justify-center ring-4 shadow-2xl" style={{ background: `linear-gradient(135deg, ${accentColor}, #7c3aed)`, ringColor: `${textColor}20` }}>
+            <div className="w-24 h-24 rounded-full mx-auto mb-5 flex items-center justify-center border-4 shadow-2xl" style={{ background: `linear-gradient(135deg, ${accentColor}, #7c3aed)`, borderColor: `${textColor}20` }}>
               <span className="text-3xl font-bold text-white">{displayName.charAt(0).toUpperCase()}</span>
             </div>
           )}
