@@ -19,6 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ClaimOnLogin } from "@/components/claim-on-login";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { useLanguage } from "@/context/LanguageContext";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Executive Dashboard — Kliqs.me
@@ -112,6 +113,8 @@ export default function DashboardPage() {
   const totalLinksPercent = Math.min((totalActiveLinks / totalLinksMax) * 100, 100);
   const qrPercent = Math.min((qrCodesThisMonth / qrCodesPerMonth) * 100, 100);
 
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen flex bg-[#f7f9fc] pt-14 lg:pt-0">
       <ClaimOnLogin />
@@ -130,10 +133,10 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-                Dashboard
+                {t("dashboard.title")}
               </h1>
               <p className="text-sm text-gray-400 mt-0.5">
-                Welcome back, {userName.split(" ")[0]}!
+                {t("dashboard.welcome")}, {userName.split(" ")[0]}!
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -153,7 +156,7 @@ export default function DashboardPage() {
                 className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#635bff] to-[#8b5cf6] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-[#635bff]/20 transition-all"
               >
                 <Sparkles className="w-4 h-4" />
-                Upgrade Plan
+                {t("dashboard.upgradePlan")}
               </a>
             </div>
           </div>
@@ -167,7 +170,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <QuickActionCard
               icon={Link2}
-              label="Short new Link"
+              label={t("dashboard.shortNewLink")}
               href="/links"
               bgColor="bg-[#635bff]/5"
               iconColor="text-[#635bff]"
@@ -175,7 +178,7 @@ export default function DashboardPage() {
             />
             <QuickActionCard
               icon={QrCode}
-              label="Create new QR Codes"
+              label={t("dashboard.createQrCodes")}
               href="/qr-codes"
               bgColor="bg-purple-50"
               iconColor="text-purple-500"
@@ -183,7 +186,7 @@ export default function DashboardPage() {
             />
             <QuickActionCard
               icon={User}
-              label="Create new Bio Page"
+              label={t("dashboard.createBioPage")}
               href="/bio-page"
               bgColor="bg-blue-50"
               iconColor="text-blue-500"
@@ -197,28 +200,28 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <MetricCard
               icon={MousePointerClick}
-              label="Total Clicks"
+              label={t("dashboard.totalClicks")}
               value={isLoading ? "—" : (stats?.totalClicks ?? 0).toString()}
               iconBg="bg-[#635bff]/10"
               iconColor="text-[#635bff]"
             />
             <MetricCard
               icon={Users}
-              label="Unique Visitors"
+              label={t("dashboard.uniqueVisitors")}
               value={isLoading ? "—" : (stats?.uniqueVisitors ?? 0).toString()}
               iconBg="bg-emerald-50"
               iconColor="text-emerald-500"
             />
             <MetricCard
               icon={QrCode}
-              label="QR Code Scans"
+              label={t("dashboard.qrCodeScans")}
               value={isLoading ? "—" : (stats?.qrCodeScans ?? 0).toString()}
               iconBg="bg-purple-50"
               iconColor="text-purple-500"
             />
             <MetricCard
               icon={Eye}
-              label="Bio Page Views"
+              label={t("dashboard.bioPageViews")}
               value={isLoading ? "—" : (stats?.bioPageViews ?? 0).toString()}
               iconBg="bg-blue-50"
               iconColor="text-blue-500"
@@ -244,7 +247,7 @@ export default function DashboardPage() {
                       Kliqs — {stats?.plan?.name || "Free Plan"}
                     </h3>
                     <p className="text-xs text-gray-400">
-                      Basic features for personal use
+                      {t("dashboard.planTitle")}
                     </p>
                   </div>
                 </div>
@@ -252,15 +255,15 @@ export default function DashboardPage() {
                 <ul className="space-y-2 text-sm text-gray-500 mb-5">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
-                    {linksPerDayLimit} shortened links per day
+                    {linksPerDayLimit} {t("dashboard.linksPerDay")}
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
-                    {qrCodesPerMonth} QR codes per month
+                    {qrCodesPerMonth} {t("dashboard.qrPerMonth")}
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#635bff]" />
-                    Basic click analytics
+                    {t("dashboard.basicAnalytics")}
                   </li>
                 </ul>
 
@@ -268,7 +271,7 @@ export default function DashboardPage() {
                   href="#"
                   className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors"
                 >
-                  Upgrade to Pro
+                  {t("dashboard.upgradePro")}
                   <ChevronRight className="w-4 h-4" />
                 </a>
               </div>
@@ -277,7 +280,7 @@ export default function DashboardPage() {
             {/* Usage Limits */}
             <div className="bg-white rounded-xl border border-gray-100 p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-5">
-                Usage This Period
+                {t("dashboard.usageThisPeriod")}
               </h3>
 
               <div className="space-y-5">
@@ -285,7 +288,7 @@ export default function DashboardPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-600">
-                      Links created today
+                      {t("dashboard.linksCreatedToday")}
                     </span>
                     <span className="text-sm font-bold text-gray-900">
                       {linksToday} / {linksPerDayLimit}
@@ -309,7 +312,7 @@ export default function DashboardPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-600">
-                      QR Codes this month
+                      {t("dashboard.qrCodesThisMonth")}
                     </span>
                     <span className="text-sm font-bold text-gray-900">
                       {qrCodesThisMonth} / {qrCodesPerMonth}
@@ -333,7 +336,7 @@ export default function DashboardPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-600">
-                      Total active links
+                      {t("dashboard.totalActiveLinks")}
                     </span>
                     <span className="text-sm font-bold text-gray-900">
                       {totalActiveLinks} / {totalLinksMax}
