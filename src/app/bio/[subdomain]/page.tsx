@@ -63,6 +63,11 @@ export default async function PublicBioPage({
   const buttonTextColor = bioPage.buttonTextColor || "#ffffff";
   const accentColor = bioPage.accentColor || "#4361ee";
 
+  // Avatar border settings
+  const avatarBorderEnabled = bioPage.avatarBorderEnabled ?? false;
+  const avatarBorderColor = bioPage.avatarBorderColor || "#4361ee";
+  const avatarBorderWidth = bioPage.avatarBorderWidth ?? 4;
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 relative" style={{ backgroundColor: bgColor }}>
       {/* Background Image with overlay */}
@@ -77,9 +82,9 @@ export default async function PublicBioPage({
         {/* Profile */}
         <div className="text-center mb-10">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} className="w-24 h-24 rounded-full mx-auto mb-5 border-4 shadow-2xl object-cover" style={{ borderColor: `${textColor}20` }} />
+            <img src={avatarUrl} alt={displayName} className="w-24 h-24 rounded-full mx-auto mb-5 shadow-2xl object-cover" style={{ border: avatarBorderEnabled ? `${avatarBorderWidth}px solid ${avatarBorderColor}` : 'none' }} />
           ) : (
-            <div className="w-24 h-24 rounded-full mx-auto mb-5 flex items-center justify-center border-4 shadow-2xl" style={{ background: `linear-gradient(135deg, ${accentColor}, #7c3aed)`, borderColor: `${textColor}20` }}>
+            <div className="w-24 h-24 rounded-full mx-auto mb-5 flex items-center justify-center shadow-2xl" style={{ background: `linear-gradient(135deg, ${accentColor}, #7c3aed)`, border: avatarBorderEnabled ? `${avatarBorderWidth}px solid ${avatarBorderColor}` : 'none' }}>
               <span className="text-3xl font-bold text-white">{displayName.charAt(0).toUpperCase()}</span>
             </div>
           )}

@@ -143,6 +143,9 @@ model BioPage {
   buttonBgColor      String   @default("#1a1a1a") // Link button background
   buttonTextColor    String   @default("#ffffff") // Link button text
   accentColor        String   @default("#4361ee") // Accent/highlight color
+  avatarBorderEnabled Boolean @default(false)    // Toggle avatar border on/off
+  avatarBorderColor   String  @default("#4361ee") // Avatar border hex color
+  avatarBorderWidth   Int     @default(4)         // Avatar border width in px (1-15)
   published          Boolean  @default(false)
   views              Int      @default(0)
   userId             String
