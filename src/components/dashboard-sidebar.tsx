@@ -15,19 +15,22 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useCallback } from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { LanguageSwitcherDashboard } from "@/components/language-switcher-dashboard";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Centralized Dashboard Sidebar — Single source of truth for navigation.
 // Supports both desktop (static) and mobile (overlay drawer) modes.
+// Uses i18n context for translated labels.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const SIDEBAR_NAV_ITEMS = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: BarChart3, label: "Analytics", href: "/analytics" },
-  { icon: Link2, label: "Links", href: "/links" },
-  { icon: QrCode, label: "QR Codes", href: "/qr-codes" },
-  { icon: User, label: "Bio Page", href: "/bio-page" },
-  { icon: Settings, label: "Settings", href: "/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", translationKey: "nav.dashboard" },
+  { icon: BarChart3, label: "Analytics", href: "/analytics", translationKey: "nav.analytics" },
+  { icon: Link2, label: "Links", href: "/links", translationKey: "nav.links" },
+  { icon: QrCode, label: "QR Codes", href: "/qr-codes", translationKey: "nav.qrCodes" },
+  { icon: User, label: "Bio Page", href: "/bio-page", translationKey: "nav.bioPage" },
+  { icon: Settings, label: "Settings", href: "/settings", translationKey: "nav.settings" },
 ] as const;
 
 interface DashboardSidebarProps {
@@ -36,6 +39,7 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ activePage = "Dashboard" }: DashboardSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useLanguage();
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
@@ -44,16 +48,17 @@ export function DashboardSidebar({ activePage = "Dashboard" }: DashboardSidebarP
       {/* Mobile Header — visible only on small screens */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-white border-b border-gray-100 px-4 py-3">
         <Image src="/logo.svg" alt="Kliqs.me" width={100} height={26} className="h-6 w-auto" />
-        <button
-          onClick={() => setMobileOpen(true)}
-          className="p-2 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer"
-          aria-label="Open navigation menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcherDashboard />
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="p-2 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer"
+            aria-label="Open navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
       </div>
-
-
 
       {/* Mobile Overlay Drawer */}
       {mobileOpen && (
@@ -82,7 +87,7 @@ export function DashboardSidebar({ activePage = "Dashboard" }: DashboardSidebarP
                 <SidebarItem
                   key={item.label}
                   icon={item.icon}
-                  label={item.label}
+                  label={t(item.translationKey)}
                   href={item.href}
                   active={item.label === activePage}
                   onClick={closeMobile}
@@ -97,9 +102,10 @@ export function DashboardSidebar({ activePage = "Dashboard" }: DashboardSidebarP
 
       {/* Desktop Sidebar — hidden on mobile */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-100 px-4 py-6 sticky top-0 h-screen">
-        {/* Logo */}
-        <div className="px-3 mb-8">
+        {/* Logo + Language Switcher */}
+        <div className="px-3 mb-8 flex items-center justify-between">
           <Image src="/logo.svg" alt="Kliqs.me" width={110} height={28} className="h-7 w-auto" />
+          <LanguageSwitcherDashboard />
         </div>
 
         {/* Navigation */}
@@ -108,7 +114,7 @@ export function DashboardSidebar({ activePage = "Dashboard" }: DashboardSidebarP
             <SidebarItem
               key={item.label}
               icon={item.icon}
-              label={item.label}
+              label={t(item.translationKey)}
               href={item.href}
               active={item.label === activePage}
             />
@@ -157,6 +163,7 @@ function SidebarItem({
 
 function DesktopSidebarFooter() {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const gravatarHash = (session?.user as Record<string, unknown> | undefined)?.gravatarHash as string | undefined;
   const gravatarUrl = gravatarHash
     ? `https://www.gravatar.com/avatar/${gravatarHash}?d=retro&s=40`
@@ -175,12 +182,12 @@ function DesktopSidebarFooter() {
         )}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
-          <p className="text-xs text-gray-400">Free Plan</p>
+          <p className="text-xs text-gray-400">{t("nav.freePlan")}</p>
         </div>
         <button
           onClick={() => signOut({ callbackUrl: "https://home.kliqs.me" })}
           className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-          title="Sign out"
+          title={t("nav.signOut")}
         >
           <LogOut className="w-4 h-4" />
         </button>
@@ -191,6 +198,7 @@ function DesktopSidebarFooter() {
 
 function MobileSidebarFooter() {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const gravatarHash = (session?.user as Record<string, unknown> | undefined)?.gravatarHash as string | undefined;
   const gravatarUrl = gravatarHash
     ? `https://www.gravatar.com/avatar/${gravatarHash}?d=retro&s=40`
@@ -209,12 +217,12 @@ function MobileSidebarFooter() {
         )}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
-          <p className="text-xs text-gray-400">Free Plan</p>
+          <p className="text-xs text-gray-400">{t("nav.freePlan")}</p>
         </div>
         <button
           onClick={() => signOut({ callbackUrl: "https://home.kliqs.me" })}
           className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-          title="Sign out"
+          title={t("nav.signOut")}
         >
           <LogOut className="w-4 h-4" />
         </button>
