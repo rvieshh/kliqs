@@ -86,7 +86,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#f7f9fc]">
+    <div className="min-h-screen flex bg-[#f7f9fc] pt-14 lg:pt-0">
       {/* Sidebar */}
       <DashboardSidebar activePage="Analytics" />
 

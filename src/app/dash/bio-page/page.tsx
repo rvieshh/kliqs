@@ -171,7 +171,7 @@ export default function BioPagePage() {
   const userName = session?.user?.name || "User";
 
   return (
-    <div className="min-h-screen flex bg-[#f7f9fc]">
+    <div className="min-h-screen flex bg-[#f7f9fc] pt-14 lg:pt-0">
       {/* Toast */}
       {toast && (
         <div className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border ${

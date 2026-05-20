@@ -53,8 +53,7 @@ export function DashboardSidebar({ activePage = "Dashboard" }: DashboardSidebarP
         </button>
       </div>
 
-      {/* Mobile Spacer — pushes content below the fixed header */}
-      <div className="lg:hidden h-[52px] flex-shrink-0" />
+
 
       {/* Mobile Overlay Drawer */}
       {mobileOpen && (
