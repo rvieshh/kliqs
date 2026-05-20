@@ -92,6 +92,14 @@ export async function PATCH(
     if (buttonTextColor !== null) updateData.buttonTextColor = buttonTextColor.trim();
     if (accentColor !== null) updateData.accentColor = accentColor.trim();
 
+    // Avatar border fields from FormData
+    const avatarBorderEnabled = formData.get("avatarBorderEnabled") as string | null;
+    const avatarBorderColor = formData.get("avatarBorderColor") as string | null;
+    const avatarBorderWidth = formData.get("avatarBorderWidth") as string | null;
+    if (avatarBorderEnabled !== null) updateData.avatarBorderEnabled = avatarBorderEnabled === "true";
+    if (avatarBorderColor !== null) updateData.avatarBorderColor = avatarBorderColor.trim();
+    if (avatarBorderWidth !== null) updateData.avatarBorderWidth = parseInt(avatarBorderWidth, 10) || 4;
+
     // Avatar file upload
     const avatarFile = formData.get("avatar") as File | null;
     if (avatarFile && avatarFile.size > 0) {
@@ -142,6 +150,9 @@ export async function PATCH(
     if ((body as Record<string, unknown>).buttonBgColor !== undefined) updateData.buttonBgColor = ((body as Record<string, unknown>).buttonBgColor as string).trim();
     if ((body as Record<string, unknown>).buttonTextColor !== undefined) updateData.buttonTextColor = ((body as Record<string, unknown>).buttonTextColor as string).trim();
     if ((body as Record<string, unknown>).accentColor !== undefined) updateData.accentColor = ((body as Record<string, unknown>).accentColor as string).trim();
+    if ((body as Record<string, unknown>).avatarBorderEnabled !== undefined) updateData.avatarBorderEnabled = (body as Record<string, unknown>).avatarBorderEnabled as boolean;
+    if ((body as Record<string, unknown>).avatarBorderColor !== undefined) updateData.avatarBorderColor = ((body as Record<string, unknown>).avatarBorderColor as string).trim();
+    if ((body as Record<string, unknown>).avatarBorderWidth !== undefined) updateData.avatarBorderWidth = (body as Record<string, unknown>).avatarBorderWidth as number;
     if (body.published !== undefined) updateData.published = body.published;
     if (body.links !== undefined) linksData = body.links;
   }
