@@ -375,7 +375,6 @@ export default function BioPagePage() {
                     className="flex-1 px-3 py-3 text-sm focus:outline-none placeholder:text-gray-300"
                   />
                   <span className="px-3 py-3 bg-gray-50 text-sm text-gray-400 border-l border-gray-200 whitespace-nowrap">.kliqs.me</span>
-                  />
                 </div>
                 <p className="text-xs text-gray-400 mt-1">3-30 characters: lowercase letters, numbers, hyphens, underscores</p>
               </div>
