@@ -113,7 +113,7 @@ export default function DashboardPage() {
   const qrPercent = Math.min((qrCodesThisMonth / qrCodesPerMonth) * 100, 100);
 
   return (
-    <div className="min-h-screen flex bg-[#f7f9fc]">
+    <div className="min-h-screen flex bg-[#f7f9fc] pt-14 lg:pt-0">
       <ClaimOnLogin />
 
       {/* ═══════════════════════════════════════════════════════════════════════
