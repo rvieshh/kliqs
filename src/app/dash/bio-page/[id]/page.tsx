@@ -139,7 +139,7 @@ export default function BioPageBuilderPage() {
 
   function updateLink(index: number, field: keyof BioLinkItem, value: string) {
     const updated = [...links];
-    (updated[index] as Record<string, unknown>)[field] = value;
+    updated[index] = { ...updated[index], [field]: value };
     setLinks(updated);
   }
 
