@@ -214,7 +214,7 @@ export default function BioPageBuilderPage() {
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-100 px-6 lg:px-8 py-4">
+      <header className="lg:sticky lg:top-0 z-40 bg-white border-b border-gray-100 px-6 lg:px-8 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/bio-page" className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
