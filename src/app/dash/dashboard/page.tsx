@@ -37,6 +37,7 @@ interface DashboardStats {
   bioPageViews: number;
   linksToday: number;
   totalActiveLinks: number;
+  qrCodesThisMonth: number;
   plan: {
     name: string;
     linksPerDay: number;
@@ -107,11 +108,12 @@ export default function DashboardPage() {
   const linksPerDayLimit = stats?.plan?.linksPerDay ?? 10;
   const totalActiveLinks = stats?.totalActiveLinks ?? 0;
   const totalLinksMax = stats?.plan?.totalLinksMax ?? 50;
+  const qrCodesThisMonth = stats?.qrCodesThisMonth ?? 0;
   const qrCodesPerMonth = stats?.plan?.qrCodesPerMonth ?? 25;
 
   const linksTodayPercent = Math.min((linksToday / linksPerDayLimit) * 100, 100);
   const totalLinksPercent = Math.min((totalActiveLinks / totalLinksMax) * 100, 100);
-  const qrPercent = Math.min((stats?.qrCodeScans ?? 0) / qrCodesPerMonth * 100, 100);
+  const qrPercent = Math.min((qrCodesThisMonth / qrCodesPerMonth) * 100, 100);
 
   return (
     <div className="min-h-screen flex bg-[#f7f9fc]">
@@ -128,12 +130,12 @@ export default function DashboardPage() {
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1">
-          <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
-          <SidebarItem icon={BarChart3} label="Analytics" />
-          <SidebarItem icon={Link2} label="Links" />
-          <SidebarItem icon={QrCode} label="QR Codes" />
-          <SidebarItem icon={User} label="Bio Page" />
-          <SidebarItem icon={Settings} label="Settings" />
+          <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard" active />
+          <SidebarItem icon={BarChart3} label="Analytics" href="/analytics" />
+          <SidebarItem icon={Link2} label="Links" href="/links" />
+          <SidebarItem icon={QrCode} label="QR Codes" href="/qr-codes" />
+          <SidebarItem icon={User} label="Bio Page" href="/bio-page" />
+          <SidebarItem icon={Settings} label="Settings" href="/settings" />
         </nav>
 
         {/* User Profile with Gravatar Retro */}
@@ -360,7 +362,7 @@ export default function DashboardPage() {
                       QR Codes this month
                     </span>
                     <span className="text-sm font-bold text-gray-900">
-                      {stats?.qrCodeScans ?? 0} / {qrCodesPerMonth}
+                      {qrCodesThisMonth} / {qrCodesPerMonth}
                     </span>
                   </div>
                   <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
@@ -416,15 +418,17 @@ export default function DashboardPage() {
 function SidebarItem({
   icon: Icon,
   label,
+  href = "#",
   active = false,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
+  href?: string;
   active?: boolean;
 }) {
   return (
-    <a
-      href="#"
+    <Link
+      href={href}
       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
         active
           ? "bg-[#635bff]/5 text-[#635bff]"
@@ -433,7 +437,7 @@ function SidebarItem({
     >
       <Icon className="w-4.5 h-4.5" />
       {label}
-    </a>
+    </Link>
   );
 }
 
