@@ -122,17 +122,25 @@ export function middleware(request: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────────
   // WILDCARD SUBDOMAIN: *.kliqs.me → Bio Pages
   // Any subdomain not matching home/dash/www is treated as a bio page handle.
-  // Example: john.kliqs.me → rewrite to /bio/john
+  // Example: testt.kliqs.me → rewrite to /bio/testt
   // ─────────────────────────────────────────────────────────────────────────
-  const RESERVED_SUBDOMAINS = ["home", "dash", "www", "api", "app", "mail"];
-  if (
-    currentHost.endsWith(`.${ROOT_DOMAIN}`) &&
-    currentHost !== HOME_DOMAIN &&
-    currentHost !== DASH_DOMAIN
-  ) {
-    const subdomain = currentHost.replace(`.${ROOT_DOMAIN}`, "");
-    if (subdomain && !RESERVED_SUBDOMAINS.includes(subdomain)) {
-      const url = new URL(`/bio/${subdomain}${pathname}`, request.url);
+  const RESERVED_SUBDOMAINS = ["home", "dash", "www", "api", "app", "mail", "admin", "support"];
+
+  // Extract subdomain: check if host ends with .kliqs.me (production)
+  // or .localhost (local dev with subdomain simulation)
+  const isSubdomainOfRoot = currentHost.endsWith(`.${ROOT_DOMAIN}`);
+  const isLocalSubdomain = currentHost.endsWith(".localhost");
+
+  if (isSubdomainOfRoot || isLocalSubdomain) {
+    const subdomain = isSubdomainOfRoot
+      ? currentHost.slice(0, -(ROOT_DOMAIN.length + 1)) // strip ".kliqs.me"
+      : currentHost.slice(0, -".localhost".length);      // strip ".localhost"
+
+    // Only rewrite if it's a valid, non-reserved subdomain
+    if (subdomain && !RESERVED_SUBDOMAINS.includes(subdomain) && subdomain !== "www") {
+      // Rewrite root "/" to /bio/[subdomain] (not /bio/[subdomain]/)
+      const targetPath = pathname === "/" ? `/bio/${subdomain}` : `/bio/${subdomain}${pathname}`;
+      const url = new URL(targetPath, request.url);
       return NextResponse.rewrite(url);
     }
   }
@@ -142,7 +150,7 @@ export function middleware(request: NextRequest) {
   // ─────────────────────────────────────────────────────────────────────────
   if (currentHost === "localhost" || currentHost === "127.0.0.1") {
     // In development, let all routes pass through without rewriting
-    // Developers can access /home, /dash, /redirect directly
+    // Developers can access /home, /dash, /redirect, /bio directly
     return NextResponse.next();
   }
 
