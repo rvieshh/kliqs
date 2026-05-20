@@ -21,6 +21,7 @@ import {
   Check,
   AlertCircle,
   ExternalLink,
+  Pencil,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -286,7 +287,7 @@ export default function BioPagePage() {
             /* Bio Pages List */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {bioPages.map((page) => (
-                <div key={page.id} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-sm transition-shadow relative overflow-hidden">
+                <div key={page.id} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-sm transition-shadow relative overflow-hidden group">
                   {/* Status badge */}
                   <div className="absolute top-4 right-4">
                     <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
@@ -299,17 +300,20 @@ export default function BioPagePage() {
                     </div>
                   </div>
 
-                  {/* Page icon */}
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4361ee]/10 to-[#03ab0e]/10 flex items-center justify-center mb-4">
-                    <Globe className="w-6 h-6 text-[#4361ee]" />
-                  </div>
+                  {/* Clickable area */}
+                  <Link href={`/bio-page/${page.id}`} className="block">
+                    {/* Page icon */}
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4361ee]/10 to-[#03ab0e]/10 flex items-center justify-center mb-4">
+                      <Globe className="w-6 h-6 text-[#4361ee]" />
+                    </div>
 
-                  {/* Info */}
-                  <h3 className="text-sm font-semibold text-gray-900 mb-1">{page.title}</h3>
-                  <p className="text-xs text-[#4361ee] font-medium mb-1">{page.handle}.kliqs.me</p>
-                  {page.description && (
-                    <p className="text-xs text-gray-400 mb-3 line-clamp-2">{page.description}</p>
-                  )}
+                    {/* Info */}
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">{page.title}</h3>
+                    <p className="text-xs text-[#4361ee] font-medium mb-1">{page.handle}.kliqs.me</p>
+                    {page.description && (
+                      <p className="text-xs text-gray-400 mb-3 line-clamp-2">{page.description}</p>
+                    )}
+                  </Link>
 
                   {/* Stats & Actions */}
                   <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
@@ -318,10 +322,13 @@ export default function BioPagePage() {
                       <span>{page.views} views</span>
                     </div>
                     <div className="flex items-center gap-1">
+                      <Link href={`/bio-page/${page.id}`} className="p-1.5 rounded-lg text-gray-400 hover:text-[#4361ee] hover:bg-[#4361ee]/5 transition-colors" title="Edit page">
+                        <Pencil className="w-4 h-4" />
+                      </Link>
                       <a href={`https://${page.handle}.kliqs.me`} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-gray-400 hover:text-[#4361ee] hover:bg-[#4361ee]/5 transition-colors" title="View page">
                         <ExternalLink className="w-4 h-4" />
                       </a>
-                      <button onClick={() => handleDelete(page.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer" title="Delete">
+                      <button onClick={(e) => { e.preventDefault(); handleDelete(page.id); }} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer" title="Delete">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
