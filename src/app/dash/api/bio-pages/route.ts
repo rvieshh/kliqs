@@ -89,8 +89,6 @@ export async function POST(request: NextRequest) {
       { status: 409 }
     );
   }
-    );
-  }
 
   // Check handle uniqueness
   const existing = await prisma.bioPage.findUnique({
