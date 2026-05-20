@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import { Globe, ExternalLink } from "lucide-react";
+import { Globe, ExternalLink, Link2Off } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Public Bio Page — Rendered at [username].kliqs.me
 // Server Component: fetches bio page data from DB based on subdomain param.
+// Shows a custom "not found" UI if the subdomain doesn't exist.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default async function PublicBioPage({
@@ -24,8 +24,27 @@ export default async function PublicBioPage({
     },
   });
 
+  // Custom "Not Found" UI — shown when subdomain doesn't exist or page is unpublished
   if (!bioPage || !bioPage.published) {
-    notFound();
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-sm text-center">
+          <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-5">
+            <Link2Off className="w-8 h-8 text-red-400" />
+          </div>
+          <h1 className="text-xl font-bold text-gray-900 mb-2">Page Not Found</h1>
+          <p className="text-sm text-gray-500 mb-6">
+            The bio page <span className="font-semibold text-gray-700">{subdomain}.kliqs.me</span> doesn&apos;t exist or hasn&apos;t been published yet.
+          </p>
+          <a
+            href="https://home.kliqs.me"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-[#4361ee] text-white text-sm font-semibold rounded-xl hover:bg-[#3a56d4] transition-all"
+          >
+            Create your own at Kliqs.me
+          </a>
+        </div>
+      </div>
+    );
   }
 
   // Increment views (fire-and-forget)
