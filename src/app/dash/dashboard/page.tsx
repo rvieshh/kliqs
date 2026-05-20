@@ -126,7 +126,7 @@ export default function DashboardPage() {
       ═══════════════════════════════════════════════════════════════════════ */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Header Bar */}
-        <header className="sticky top-0 z-40 bg-[#f7f9fc]/80 backdrop-blur-sm border-b border-gray-100 px-6 lg:px-8 py-4">
+        <header className="lg:sticky lg:top-0 z-40 bg-[#f7f9fc]/80 backdrop-blur-sm border-b border-gray-100 px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
