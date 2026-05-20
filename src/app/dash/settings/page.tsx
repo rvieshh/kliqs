@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { Settings, Loader2, User, CreditCard, Shield, Save, Check, AlertCircle, X } from "lucide-react";
+import { Loader2, User, CreditCard, Shield, Save, Check, AlertCircle, X, Lock } from "lucide-react";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -215,20 +215,170 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-gray-900">Security</h2>
-                    <p className="text-xs text-gray-400">Account security settings</p>
+                    <p className="text-xs text-gray-400">Change your password</p>
                   </div>
                 </div>
-                <div className="flex items-center justify-center h-24 border-2 border-dashed border-gray-200 rounded-xl">
-                  <div className="text-center">
-                    <Settings className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                    <p className="text-sm text-gray-400">Password & 2FA settings coming soon</p>
-                  </div>
-                </div>
+                <ChangePasswordForm onToast={setToast} />
               </section>
             </>
           )}
         </main>
       </div>
     </div>
+  );
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Change Password Form Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ChangePasswordForm({ onToast }: { onToast: (toast: Toast) => void }) {
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasExistingPassword, setHasExistingPassword] = useState<boolean | null>(null);
+
+  // Check if the user already has a password set
+  useEffect(() => {
+    async function checkPassword() {
+      try {
+        const res = await fetch("/api/settings");
+        if (res.ok) {
+          const data = await res.json();
+          setHasExistingPassword(data.user.hasPassword ?? false);
+        }
+      } catch {
+        // Default to assuming they have one (safer)
+        setHasExistingPassword(true);
+      }
+    }
+    checkPassword();
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    // Client-side validation
+    if (newPassword.length < 8) {
+      onToast({ type: "error", message: "New password must be at least 8 characters" });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      onToast({ type: "error", message: "New password and confirmation do not match" });
+      return;
+    }
+
+    if (hasExistingPassword && !currentPassword) {
+      onToast({ type: "error", message: "Current password is required" });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/settings/security", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword: hasExistingPassword ? currentPassword : undefined,
+          newPassword,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        onToast({ type: "error", message: data.error || "Failed to update password" });
+        return;
+      }
+
+      onToast({ type: "success", message: data.message || "Password updated successfully!" });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setHasExistingPassword(true); // Now they have a password
+    } catch {
+      onToast({ type: "error", message: "Network error. Please try again." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  const passwordMismatch = confirmPassword.length > 0 && newPassword !== confirmPassword;
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {hasExistingPassword === null ? (
+        <div className="flex items-center justify-center py-6">
+          <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+        </div>
+      ) : (
+        <>
+          {!hasExistingPassword && (
+            <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-blue-50 border border-blue-100 mb-4">
+              <Lock className="w-4 h-4 text-blue-500 flex-shrink-0" />
+              <p className="text-xs text-blue-700">
+                You signed in via OAuth and don&apos;t have a password yet. Set one below for additional security.
+              </p>
+            </div>
+          )}
+
+          {hasExistingPassword && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Current Password</label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter your current password"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-gray-300"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">New Password</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Minimum 8 characters"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all placeholder:text-gray-300"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm New Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Re-enter new password"
+              className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300 ${
+                passwordMismatch
+                  ? "border-red-300 focus:ring-red-500/20 focus:border-red-500"
+                  : "border-gray-200 focus:ring-emerald-500/20 focus:border-emerald-500"
+              }`}
+            />
+            {passwordMismatch && (
+              <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
+            )}
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={isSubmitting || !newPassword || !confirmPassword || passwordMismatch}
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
+              {isSubmitting ? "Updating..." : hasExistingPassword ? "Update Password" : "Set Password"}
+            </button>
+          </div>
+        </>
+      )}
+    </form>
   );
 }
