@@ -20,6 +20,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  password      String?   // Optional hashed password (bcrypt) for credential-based auth
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

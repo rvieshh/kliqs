@@ -23,6 +23,7 @@ export async function GET() {
         name: true,
         email: true,
         image: true,
+        password: true,
         createdAt: true,
       },
     });
@@ -31,7 +32,17 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ user });
+    // Return hasPassword flag (don't expose the hash itself)
+    return NextResponse.json({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        createdAt: user.createdAt,
+        hasPassword: !!user.password,
+      },
+    });
   } catch (error) {
     console.error("[settings] Failed to fetch user:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
