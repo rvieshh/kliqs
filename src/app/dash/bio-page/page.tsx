@@ -306,7 +306,7 @@ export default function BioPagePage() {
 
                   {/* Info */}
                   <h3 className="text-sm font-semibold text-gray-900 mb-1">{page.title}</h3>
-                  <p className="text-xs text-[#4361ee] font-medium mb-1">kliqs.me/bio/{page.handle}</p>
+                  <p className="text-xs text-[#4361ee] font-medium mb-1">{page.handle}.kliqs.me</p>
                   {page.description && (
                     <p className="text-xs text-gray-400 mb-3 line-clamp-2">{page.description}</p>
                   )}
@@ -318,7 +318,7 @@ export default function BioPagePage() {
                       <span>{page.views} views</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <a href={`https://kliqs.me/bio/${page.handle}`} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-gray-400 hover:text-[#4361ee] hover:bg-[#4361ee]/5 transition-colors" title="View page">
+                      <a href={`https://${page.handle}.kliqs.me`} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-gray-400 hover:text-[#4361ee] hover:bg-[#4361ee]/5 transition-colors" title="View page">
                         <ExternalLink className="w-4 h-4" />
                       </a>
                       <button onClick={() => handleDelete(page.id)} className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors cursor-pointer" title="Delete">
@@ -364,16 +364,17 @@ export default function BioPagePage() {
 
               {/* Handle */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Handle (URL slug)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Subdomain (your URL)</label>
                 <div className="flex items-center gap-0 rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-[#4361ee]/20 focus-within:border-[#4361ee] transition-all overflow-hidden">
-                  <span className="px-3 py-3 bg-gray-50 text-sm text-gray-400 border-r border-gray-200 whitespace-nowrap">kliqs.me/bio/</span>
                   <input
                     type="text"
                     value={handle}
                     onChange={(e) => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
-                    placeholder="my-page"
+                    placeholder="yourname"
                     required
                     className="flex-1 px-3 py-3 text-sm focus:outline-none placeholder:text-gray-300"
+                  />
+                  <span className="px-3 py-3 bg-gray-50 text-sm text-gray-400 border-l border-gray-200 whitespace-nowrap">.kliqs.me</span>
                   />
                 </div>
                 <p className="text-xs text-gray-400 mt-1">3-30 characters: lowercase letters, numbers, hyphens, underscores</p>
