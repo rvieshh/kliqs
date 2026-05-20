@@ -133,17 +133,40 @@ model QrCode {
 model BioPage {
   id          String   @id @default(cuid())
   title       String   // Display name of the bio page
-  handle      String   @unique // Unique URL handle (e.g., kliqs.me/bio/handle)
+  handle      String   @unique // Unique URL handle / subdomain
+  displayName String?  // Public display name (shown on bio page)
   description String?  // Optional short bio/description
+  avatarUrl   String?  // Custom avatar URL
   published   Boolean  @default(false)
   views       Int      @default(0)
   userId      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links BioLink[]
 
   @@index([userId])
   @@index([handle])
   @@map("bio_pages")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Bio Link Model
+// Individual links displayed on a user's bio page.
+// ─────────────────────────────────────────────────────────────────────────────
+model BioLink {
+  id        String   @id @default(cuid())
+  title     String   // Link button label
+  url       String   // Destination URL
+  icon      String?  // Optional icon name (e.g., "globe", "twitter")
+  order     Int      @default(0)
+  bioPageId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bioPage BioPage @relation(fields: [bioPageId], references: [id], onDelete: Cascade)
+
+  @@index([bioPageId])
+  @@map("bio_links")
 }
